@@ -11,7 +11,7 @@
 
 ### :floppy_disk:数据库
 
-- [sql语句](https://github.com/flymecode/MX-Notes/blob/master/db-note/simple-sql.md)  
+- [sql语句](https://github.com/flymecode/MX-Notes/blob/master/db-note/simple_sql.md)  
 
   对语句的使用简单介绍
 
