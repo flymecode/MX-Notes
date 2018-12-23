@@ -6,7 +6,7 @@
 <br>
 
 ### :bulb:系统设计
-- [设计模式](https://github.com/flymecode/MX-Notes/blob/master/db-note/simple-sql.md)  
+- [设计模式]()  
 
 
 ### :floppy_disk:数据库
@@ -17,4 +17,4 @@
 
 
 ### :hammer:工具
-- [git](https://github.com/flymecode/MX-Notes/blob/master/git-node/git.md)
+- [git](https://github.com/flymecode/MX-Notes/blob/master/git-note/git.md)
