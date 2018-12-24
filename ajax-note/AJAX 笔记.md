@@ -2,7 +2,7 @@
 
 在没有`ajax`之前实现页面局部更新的效果使用的`iframe`标签，后台相应`js`脚本，使用子页面来调用父页面的内容。 `parent.doucmnet.getElementById()`
 
-#### 初识Ajax
+### 初识Ajax
 
 ```javascript
 // 1、创建XMLHttpRequest对象
@@ -112,18 +112,87 @@ function ajax(url,type，dataType,param,callback){
 
 
 
-##### JQuery-Ajax 相关使用
+### JQuery-Ajax 相关使用
 
 ```javascript
 $.ajax({
-    type:'get',
+    type:'get', // 默认是get请求
     url: '/user?username'+param，
     data： {sex:'男'}，// 两种传入参数的方式
-    dataType:'json',// 获取返回值的参数
-    success: function(data){
+    dataType:'json',// 获取返回值的参数，支持json,xml,text,javascirpt,jsonp 其实底层就有两种。
+    success: function(data) {
     .....处理业务
-}
+	},
+    error: function(data) {
+        $('#info').html("出现错误了")
+    }   
 })；
+```
+
+### 模仿JQuery-Ajax
+
+```javascript
+function ajax(obj){
+    var defaults = {
+        tyep: 'get',
+        data :{},
+        url: '#',
+        dataType : 'text',
+        async: 'true',
+        success: function(){}
+    }
+    // 处理形参，传递参数的时候就覆盖默认的参数，不传递参数的时候使用默认的参数。
+    for(var key in obj) {
+        default[key] = obj[key];
+    }
+    // 创建XMLHttpRequest 做兼容性处理
+    var xhr = null;
+    if(window.XMLHttpRequest){
+        xhr = new XMLHttpRequest();
+    } else {
+        xhr = new ActiveXObject('Micrisoft.XMLHTTP');
+    }
+    // 将对象形式的参数转化为字符串。
+  	var param = '';
+    for(var attr in obj.data){
+        param += attr +'='0bj.data[attr] + '&';
+    }
+    if(defaults.type == 'get'){
+        // encodeURI解决中文乱码
+        default url += '?' + encodeURI(param);
+    }
+   
+    if(param){
+        
+        param = param.substr(0,param.length - 1);
+    }
+    xhr.open(defaults.type,defaults.url,defaults.async);
+    var data = null;
+    if(default.type = 'post'){
+        data = param;
+        // 如果是post请求的话，设置请求头信息，如果不设置的话，无法传递数据。
+        xhr.setRequestHeader('Content-Type','application/x-www-from-urlcoded');
+    }
+    // 执行发送动作
+    xhr.send(data);
+    if(!defaults.async){
+        if(defaults.dataType == 'json'){
+            return xhr.responseText;
+        }
+    }
+    // 执行回调函数，处理服务器响应步骤。
+    xhr.onreadyStatechange = function(){
+        if(xhr.readyState = 4){
+            if(xhr.status = 200){
+                var data = xhr.reponseText;
+                if(defaults.dataType = 'json'){
+                    data = JSON.parse(data);
+                }
+                defaults.success(data);
+            }
+        }
+    }
+}
 ```
 
 
@@ -142,3 +211,61 @@ $.ajax({
    1. 定时函数（延时时间已经到达）
    2. 事件函数（特定事件被触发）
    3. Ajax的回掉函数（服务端返回数据）
+
+
+
+
+
+### Ajax跨域
+
+同源策略
+
+- 同源策略是浏览器的一种安全策略，所谓同源指的的是请求URL地址中的协议，域名，端口都相同，只要其中之一不相同就是跨域
+- 同源策略主要是保证浏览器的安全性
+- 在同源策略下，浏览器不允许Ajax跨域获取服务器数据。
+
+
+
+### 解决跨域
+
+- #### jsonp
+
+  - script标签中的`src`属性可以实现跨域访问资源。
+  - 用scrip标签 必须先引入资源，然后才能使用。
+  - 是用script标签传入参数是不好处理的。
+
+
+```javascript
+var flag = 1;
+// 动态创建script标签来实现跨域。
+var script = documnet.createElement('script');
+script.src = 'http://tom.com/data.php?flag=1';
+var head = document.getElementsByTagName('head')[0];
+head.appendChild(script);
+// callback是一个回调函数
+// 这里的callback函数由谁调用，实际上由服务器响应的内容调用（这里的内容就是js代码）
+function callback(data){ // 返回一个函数调用，
+    console.log(data);
+}
+
+// callback({'username':name}) 调用没有位置的要求
+
+```
+
+```javascript
+$.ajax(){ // 支持跨域
+    type:'get',
+    url:'',
+    dataType:'jsonp',
+    jsonp:'cb', // 自定义参数名字
+    jsonpCallback:'abc',// 自定义回调函数的值 cb = abc
+    data:{},
+    success:function(data){
+       console.log(data);
+    }，
+    error:function(data){
+        ...
+    }
+}
+```
+
