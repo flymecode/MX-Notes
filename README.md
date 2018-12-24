@@ -5,11 +5,15 @@
 <br>
 
 ### :pencil2:算法
-- [LeetCode题解]() 
-- [排序]() 
+- [LeetCode题解](https://github.com/flymecode/MX-Notes/blob/master/db-note/simple_sql.md) 
+- [排序](https://github.com/flymecode/MX-Notes/blob/master/db-note/simple_sql.md) 
 
 ### :bulb:系统设计
-- [设计模式]()  
+- [设计模式](https://github.com/flymecode/MX-Notes/blob/master/db-note/simple_sql.md) 
+
+- [VO 、PO、DTO、POJO](https://github.com/flymecode/MX-Notes/blob/master/sc-note/model.md) 
+
+  简单理解
 
 
 ### :floppy_disk:数据库
