@@ -1,11 +1,11 @@
 # MX-Notes
 |       Ⅰ       |                     Ⅱ                      |              Ⅲ               |
 | :-----------: | :----------------------------------------: | :--------------------------: |
-| 系统设计[:bulb:](#bulb-系统设计) | 数据库[:floppy_disk:](#floppy_disk-数据库) | 工具[:hammer:](#hammer-工具) |
+| 系统设计[:bulb:](#bulb系统设计) | 数据库[:floppy_disk:](#floppy_disk数据库) | 工具[:hammer:](#hammer工具) |
 
 <br>
 
-### :pencil2:​算法
+### :pencil2:算法
 - [LeetCode题解]() 
 - [排序]() 
 
