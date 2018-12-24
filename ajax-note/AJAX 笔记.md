@@ -155,7 +155,7 @@ function ajax(obj){
     // 将对象形式的参数转化为字符串。
   	var param = '';
     for(var attr in obj.data){
-        param += attr +'='0bj.data[attr] + '&';
+        param += attr +'='obj.data[attr] + '&';
     }
     if(defaults.type == 'get'){
         // encodeURI解决中文乱码
