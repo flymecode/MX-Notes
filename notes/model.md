@@ -58,7 +58,7 @@
 
 我们可以来看下面这个例子
 
-![1545630684549](https://github.com/flymecode/MX-Notes/blob/master/sc-note/image/1545630684549.png)
+![1545630684549](https://github.com/flymecode/MX-Notes/blob/master/image/1545630684549.png)
 
 针对这个实体，我们需要创建一个DO类，来封装这个Book实体。
 
