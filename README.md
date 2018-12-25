@@ -14,22 +14,22 @@
 
 
 ### :bulb:系统设计
-- [设计模式](https://github.com/flymecode/MX-Notes/blob/master/db-note/simple_sql.md) 
-- [VO 、PO、DTO、POJO](https://github.com/flymecode/MX-Notes/blob/master/sc-note/model.md) 
+- [设计模式](https://github.com/flymecode/MX-Notes/blob/master/notes/simple_sql.md) 
+- [VO 、PO、DTO、POJO](https://github.com/flymecode/MX-Notes/blob/master/notes/model.md) 
 
   简单理解
 
 
 ### :floppy_disk:数据库
 
-- [sql语句](https://github.com/flymecode/MX-Notes/blob/master/db-note/simple_sql.md)  
+- [sql语句](https://github.com/flymecode/MX-Notes/blob/master/notes/simple_sql.md)  
 
   对语句的使用简单介绍
   
 ### :hammer:中间件
-- [zookeeper](https://github.com/flymecode/MX-Notes/blob/master/git-note/git.md)
+- [zookeeper](https://github.com/flymecode/MX-Notes/blob/master/notes/git.md)
 
 ### :hammer:工具
-- [git](https://github.com/flymecode/MX-Notes/blob/master/git-note/git.md)
+- [git](https://github.com/flymecode/MX-Notes/blob/master/notes/git.md)
 
 
