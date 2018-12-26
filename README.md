@@ -2,15 +2,15 @@
 | :-----------: | :----------------------------------------: | :--------------------------: | ---------------------------- | ---------------------------- | ---------------------------- |
 | 系统设计[:bulb:](#bulb系统设计) | 数据库[:floppy_disk:](#floppy_disk数据库) |  算法:pencil2:| WEB[:earth_africa:](#earth_africaWEB) | java:coffee: | 工具[:hammer:](#hammer工具) |
 
-<br>
+
+
 ### :bulb:系统设计
+
 - [设计模式](https://github.com/flymecode/MX-Notes/blob/master/notes/simple_sql.md) 
-- [VO 、PO、DTO、POJO](https://github.com/flymecode/MX-Notes/blob/master/notes/model.md) 
-  简单理解
+- [VO 、PO、DTO、POJO](https://github.com/flymecode/MX-Notes/blob/master/notes/model.md)  简单理解
 ### :floppy_disk:数据库
 
-- [sql语句](https://github.com/flymecode/MX-Notes/blob/master/notes/simple_sql.md)  
-  对语句的使用简单介绍
+- [sql语句](https://github.com/flymecode/MX-Notes/blob/master/notes/simple_sql.md)  对语句的使用简单介绍
 ### :pencil2:算法
 - [LeetCode题解](https://github.com/flymecode/MX-Notes/blob/master/db-note/simple_sql.md) 
 - [排序](https://github.com/flymecode/MX-Notes/blob/master/notes/simple_sql.md) 
@@ -18,7 +18,7 @@
 - [HTML](https://github.com/flymecode/MX-Notes/blob/master/notes/simple_sql.md) 
 - [CSS](https://github.com/flymecode/MX-Notes/blob/master/notes/simple_sql.md) 
 - [JS基础](https://github.com/flymecode/MX-Notes/blob/master/notes/simple_sql.md) 
-- [JS高级](https://github.com/flymecode/MX-Notes/blob/master/notes/adv_js.md) 
+- [JS高级](https://github.com/flymecode/MX-Notes/blob/master/notes/adv-js.md) 
 - [Ajax](https://github.com/flymecode/MX-Notes/blob/master/notes/ajax.md) 
 ### :coffee:Java
 - [基础知识](https://github.com/flymecode/MX-Notes/blob/master/notes/java-base.md) 
