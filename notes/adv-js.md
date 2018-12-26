@@ -288,5 +288,5 @@ Array.prototype = {
 }
 ```
 
-[`随机生成方块案例`](https://g.hz.netease.com/streams/dp-reports-sql.git)
+[`随机生成方块案例`]()
 
