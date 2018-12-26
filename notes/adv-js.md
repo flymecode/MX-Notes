@@ -45,8 +45,6 @@
 
 
 
-#### 
-
 ### 创建对象
 
 - 方式一
@@ -253,7 +251,7 @@ Student.protype.sayHi = function(){
 }
 // 我们可以重新改变原型对象prototype属性
 // 但是这样我们不能通过对象调用constructor（是创建函数所使用的构造函数） 来查找我们想要的构造函数了
-// 如果我们想使用原型对象上设置的属性的时候，必须等到构造函数设置完prototype的时候才能创建对象。
+// 如果我们想使用原型对象上设置的属性的时候(此时原型对象改变了)，必须等到构造函数设置完prototype的时候才能创建对象。
 // 所以我们要先设置原型属性再创建原型对象。
 Student.prototype = {
     constructor: Student,
@@ -265,4 +263,30 @@ Student.prototype = {
     }
 }
 ```
+
+利用原型对象可以扩展内置对象
+
+```javascript
+var array = [1,2,3,4]; // 我们没有改变原型对象，只是在原型对象上新增一个属性。
+
+// 我们可以给数组新增属性
+Array.prototype.getSum = function(){
+    var sum = 0;
+    for(var i = 0;this.length;i++){
+        if(this[i] % 2 === 0){
+            sum += this[i];
+        }
+    }
+    return sum;
+}
+
+// 数组或者string中的prototype是不可以修改的	
+Array.prototype = {
+    getSum: function(){
+        .........
+    }
+}
+```
+
+[`随机生成方块案例`](https://g.hz.netease.com/streams/dp-reports-sql.git)
 
