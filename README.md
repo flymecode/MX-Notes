@@ -17,7 +17,7 @@
 ### :earth_africa:WEB
 - [HTML](https://github.com/flymecode/MX-Notes/blob/master/notes/simple_sql.md) 
 - [CSS](https://github.com/flymecode/MX-Notes/blob/master/notes/simple_sql.md) 
-- [JS基础](https://github.com/flymecode/MX-Notes/blob/master/notes/simple_sql.md) 
+- [JS基础](https://github.com/flymecode/MX-Notes/blob/master/notes/simple_sql.md)
 - [JS高级](https://github.com/flymecode/MX-Notes/blob/master/notes/adv-js.md) 
 - [Ajax](https://github.com/flymecode/MX-Notes/blob/master/notes/ajax.md) 
 ### :coffee:Java
@@ -27,5 +27,3 @@
 ### :hammer:工具
 - [git](https://github.com/flymecode/MX-Notes/blob/master/notes/git.md)
 - [zookeeper](https://github.com/flymecode/MX-Notes/blob/master/notes/git.md)
-
-

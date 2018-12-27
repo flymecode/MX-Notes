@@ -290,3 +290,67 @@ Array.prototype = {
 
 [`随机生成方块案例`]()
 
+### Bind方法
+
+```javascript
+// 函數也是對象
+// bind 新建一個方法，bind中的第一個參數可以改變函數中的this的指向。
+// bind并沒有調用
+var a = 123;
+function fn() {
+    console.log(this.a);
+}
+fn();
+var o = {a:'abc'};
+var fn1 = fn.bind(o);
+fn1() //相當於,o.fn()
+
+```
+
+在每个自调用函数前加分号；
+
+自调用函数传入参数
+
+```javascript
+// 自调用函数返回一个undefined
+// 传入参数的目的是为了在项目发布的时候能够压缩代码
+;(function(window,undefined){ // 这里是形参
+    ......
+})(window,undefined) // 这里是实参
+```
+
+### 继承
+
+```javascript
+var wjl = {
+    name: '王健林',
+    money: '1000000',
+    play: function() {
+        console.log('打高尔夫');
+    }
+}
+
+var wsc = {
+    name: '王思聪'
+    // 复制对象的成员给另一个对象
+    for (var key in wjl) {
+        // 不给王思聪复制同名的属性
+        if(wsc[key]) {
+          continue;
+        }
+        wsc[key] == wjl[key];
+    }
+}
+
+```
+### 复制对象的另外一个方法 
+```javascript
+    function extend(parent,child) {
+        for(var key in parent ) {
+            if(child[key]) {
+            continue;
+        }
+        child[key] == parent[key];
+        }
+    }
+```
