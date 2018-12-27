@@ -163,3 +163,93 @@ documnent.onmousemove = function(e){
 }
 ```
 
+### 获取滚动出页面的距离
+
+```javascript
+document.body.scrollLeft
+document.body.scrollTop
+// 处理兼容性问题
+function getScroll() {
+    var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+     var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+    
+    return {
+        scrollLeft:scrollLeft,
+        scrollTop:scrollTop; 	
+    }
+}
+```
+
+### 处理获取鼠标在页面的位置，处理兼容性
+
+```javascript
+function getPage(e) {
+	var pageX = e.pageX || e.clientX + getScroll().scrollLeft();
+    var pageY = e.pageY || e.clinetX + getScroll().scrollTop();
+    return {
+        pageX:pageX,
+        pageY:pageY
+    }
+}
+```
+
+
+
+### 获取鼠标在盒子中的位置
+
+```javascript
+box.onclick = function(e) {
+    e = e || window.event;
+    var x = getPage(e).pageX - this.offsetLeft;
+    var y = getPage(e).pageY - this.offsetTop;
+    return {
+        x:x,
+        y:y
+    }
+}
+```
+
+### 取消默认行为的执行和阻止冒泡
+
+```javascript
+link.onclick = function() {
+    // 取消默认执行
+    return faslse
+    
+    // DOM 标准方法
+    // e.preventDefault();
+    //IE老版本
+    // e.returnValue = false;
+    // Propagation 传播
+    
+    // 停止事件传播，取消冒泡
+    // 标准的DOM方法
+    e.stopProgation();
+    // 老版本IE
+    // e.cancelBUblle = true;
+}
+```
+
+### 案例 ：只能输入数字的输入框
+
+```javascript
+// 键盘事件
+// keydown 键盘按下的时候 
+// keyup 键盘弹起的时候
+
+var txt = document.getElementById('txt');
+txt.onkeydown = function(e){
+    // 判断当前用户按下的键是否是数字
+    e = e || window.event;
+    // e.keyCode 键盘码
+    // 按下后退键能够删除一个数字
+    if((e.keyCode < 48 || e.keyCode > 57) && e.keyCode !== 8 ) {
+        
+        // 非数字
+        // 取消默认行为
+        return false; // 之后的代码不执行了
+        e.preventDefault(); // 之后的代码执行
+    }
+}
+```
+
