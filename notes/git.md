@@ -7,6 +7,9 @@
 <!-- GFM-TOC -->
 
 ## 什么是Git?
+
+![1546001824528](https://github.com/flymecode/MX-Notes/blob/master/images/1546001824528.png)
+
   - Git是一款源代码管理工具(版本控制工具)
     - 我们写的代码需要使用Git进行管理。
   - 源代码有必要管理起吗？
@@ -143,12 +146,17 @@
 
 ### 提交代码到github(当作git服务器来用)
 - `git push [地址] master`
- + 示例: `git push https://github.com/huoqishi/test112.git master  master`
+ + 示例: `git push https://github.com/xxx/test112.git master  master`
  + 会把当前分支的内容上传到远程的master分支上
 
 - `git pull [地址] master`
- + 示例: `git pull https://github.com/huoqishi/test112.git master`
+ + 示例: `git pull https://github.com/xxx/test112.git master`
  + 会把远程分支的数据得到:(*注意本地-要初始一个仓储!*)
+
+- `git fetch [地址] master`
++ 示例: `git fetch https://github.com/xxx/test112.git master`
++ it fetch是将远程主机的最新内容拉到本地，用户在检查了以后决定是否合并到工作本机分支中。
++ 而git pull 则是将远程主机的最新内容拉下来后直接合并，即：git pull = git fetch + git merge，这样可能会产生冲突，需要手动解决。
 
 - `git clone [地址]`
  + 会得到远程仓储相同的数据,如果多次执行会覆盖本地内容。
