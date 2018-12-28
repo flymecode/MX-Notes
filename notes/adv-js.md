@@ -32,8 +32,6 @@
 
 任何可以用JavaScript来写的应用，最终都用JavaScript来写
 
-
-
 ### 浏览器是如何工作的？
 
 当我们输入浏览器输入域名之后浏览器都做了什么呢？
@@ -42,8 +40,6 @@
 - 通过IP地址访问指定的服务器
 - 服务器执行请求并响应请求
 - 浏览器通过渲染引擎渲染DOM树
-
-
 
 ### 创建对象
 
@@ -59,7 +55,7 @@ hero.attack = function(){
 }
 ```
 
-- 方式二 
+- 方式二
 
   `创建单个对象推荐使用`
 
@@ -95,7 +91,7 @@ function createHero(name,blood,weapon){
 - 方式四 构造函数
 
 ```javascript
-// new 
+// new
 // 1.会在内存中创建一个空对象
 // 2.设置构造函数的this,让this指向空对象
 // 3.执行构造函数中的代码
@@ -105,11 +101,11 @@ function createHero(name,blood,weapon){
 // 但是我们不建议使用这种方式，我们可以使用instanceof
 // instanceof判断对象是否是某个构造函数的实例
 function Hero(name,blood,weapon){
-    
+
     this.name = name;
     this.blood = blood;
     this.weapon = weapon;
-    
+
     this.attack = function(){
         console.log(this.weapon + '攻击敌人')；
     }
@@ -145,7 +141,7 @@ function Person(name,age){
     this.name = name;
     this.age = age;
     this.sayHi = function(){
-        
+
     }
 }
 ```
@@ -157,7 +153,7 @@ function Student(name,age,sex){
     this.name = name;
     this.age = age;
     this.sex = sex;
-    
+
     this.sayHi =  function(){
         console.log('大家好'+this.name)；
     }
@@ -183,7 +179,7 @@ function Student(name,age,sex){
     this.age = age;
     this.sex = sex;
     this.sayHi =  sayHi;
-   
+
 }
 function sayHi(){
     console.log('大家好'+this.name)；
@@ -235,8 +231,7 @@ s1.sayHi === s2.sqyHi // true
 
 - Object 原型对象.`__proto__`为`null`所以原型链的最顶端为`null`
 
-
-##### 注意点：
+### 注意点：
 
 ```javascript
 function Student(name,age) {
@@ -280,7 +275,7 @@ Array.prototype.getSum = function(){
     return sum;
 }
 
-// 数组或者string中的prototype是不可以修改的	
+// 数组或者string中的prototype是不可以修改的
 Array.prototype = {
     getSum: function(){
         .........
@@ -290,9 +285,12 @@ Array.prototype = {
 
 [`随机生成方块案例`]()
 
-### Bind()、Call()
+### bind()、call()、apply() 可以改变函数中this
+
 - bind
+  
 ```javascript
+
 // 函数也是对象
 // bind 新建一個方法，bind中的第一個參數可以改变函数中的this的指向。
 // bind并沒有調用，而是直接返回一个新的函数，由返回的函数去调用。
@@ -303,13 +301,30 @@ function fn() {
 fn();
 var o = {a:'abc'};
 var fn1 = fn.bind(o);
-fn1() //相当于,o.fn() 
+fn1() //相当于,o.fn()
+
+// 應用
+obj = {
+    name:'zhs',
+    fn: setInterval(function(){
+        console.log(this.name);
+    }.bind(this),1000); // 此處的this指向obj
+}
+obj.fn();
+
+// 在注冊事件的時候也可以改變this
+btn.onclick = function() {
+    console.log(this.name);
+}.bind(obj);
 
 ```
+
 - call
+  
 ```javascript
 
 // call() 改变函数的this，并且直接调用，需要参数的时候可以直接填写。
+// call 的返回值就是函数的返回值
 var a = 123;
 function fn(b) {
     console.log(this.a+b);
@@ -318,6 +333,48 @@ fn();
 var o = {a:'abc'};
 fn.call(o,1); // abc1
 
+// 应用 伪数组
+var obj = {
+    0:20,
+    1:21
+};
+// 可以利用数组的方法，给伪数组做操作
+Array.prototype.push.call(obj,20);
+Array.prototype.aplice.call(obj,0,1);
+
+var obj = {
+    name: 'zs'
+};
+console
+```
+
+- apply
+
+```javascript
+    // 函数是一个对象
+    // var fn = new Function();
+    // 证明fn是Funtion()的实例对象
+    console.log(fn.__proto__ === Function.prototype);
+
+    function(x, y) {
+        console.(this);
+        console.log(x + y);
+    }
+    // aplay的應用
+    // aplay的第二個參數是數組
+    fn.apply(,[]);
+
+    Math.max(3,5,6);
+    var array = [3,5,6];
+    // Math.max是不能求數組中的最大值
+    Math.max(array); // 錯誤
+    // 但是我們可以這樣用
+    // 我們可以將array中的數值傳遞給max
+    Math.max.apply(null,array)
+    Math.max.apply(Math,array)
+
+    // 我們可以將array展開傳遞給前面的方法
+    console.log.apply(console,array);
 ```
 
 在每个自调用函数前加分号；
@@ -356,7 +413,9 @@ var wsc = {
 }
 
 ```
+
 ### 复制对象的另外一个方法 
+
 ```javascript
     function extend(parent,child) {
         for(var key in parent ) {
@@ -371,6 +430,7 @@ var wsc = {
 ### 继承是类型与类型之间的关系
 
 - 例一 原型继承
+  
 ```javascript
     // 继承的目的是：把子类型中共同的成员类型提取到父类型中，实现代码重用。
     function Person(name,age,sex) {
@@ -392,7 +452,9 @@ var wsc = {
 
     }
 ```
+
 - 例二 借用构造函数
+  
 ```javascript
     function Person(name,age,sex) {
         this.name = name;
@@ -407,9 +469,11 @@ var wsc = {
     }
 
 ```
+
 - 例三 组合继承
+  
 ```javascript
-    
+
     function Person(name,age,sex) {
         this.name = name;
         this.age = age;
@@ -436,6 +500,126 @@ var wsc = {
     var p = new Person('ls',18,'男');
     // 解决办法
     Student.prototype = new Person();
+```
 
+### 函数声明与函数表达式的区别
 
+``` javascript
+    // 区别 函数调用过的是偶，函数声明会提升
+    // 函数表达式不会提升
+    // if 语句不会开启新的作用域
+    // 只有函数会开启新的作用域
+    // 现代浏览器 不会提升if语句中的函数声明，进行函数提升
+
+    // 函数声明
+    function fn1() {
+        console.log("");
+    }
+    // 函数表达式
+    var fn2 = function() {
+        console.log("");
+    }
+
+    var fn;
+    if(ture) {
+        fn = function(){
+            ....
+        }
+    } else {
+        fn = function(){
+            ....
+        }
+    }
+
+```
+
+### 函数调用形式和this的指向
+
+```javascript
+    // 1 普通函数调用
+    // this 指向window
+    funciton() {
+
+    }
+    // 2 方法调用
+    // this指向调用该方法的对象
+     var obj = {
+         fn: function () {
+             console.log();
+         }
+     }
+     obj.fn();
+    // 3 作为构造函数调用
+    // 构造函数内部的this指向由构造函数创建的对象
+
+    // 4 作为事件的处理函数
+    // this 指向触发这个事件的元素
+    btn.click = function () {
+
+    }
+    // 5 作为定时器参数
+    // this 指向window
+    setIntervar (function(){
+        console.log(this);
+    },1000);
+ 总结：this是在函数最终调用的时候确定的
+```
+### 函數中的其他成員
+```javascript
+    function() {
+        // 获取到函数的实参
+        // 当函数的参数个数不一定的时候，可以通过argumnets来获取。
+        fn.argumnets;
+        // 函数的形参个数
+        fn.length;
+        // 函数的调用者，如果是全局函数，则为null
+        fn.caller;
+        // 函数的名称
+        fn.name;
+    }
+```
+
+### 高阶函数
+
+- 函数作为参数
+```javascript
+    var arr = [1,2,3,4];
+    arr.sort(function(a,b) ){
+        return a - b;
+    }
+
+    Array.prototype.mySort = function() {
+        for (var i = 0; i < this.length; i++) {
+            var isSort = true; // 假设排好了
+            for (var j = 0; j < this.length - i - 1; j++){
+                if(fn(this[j],this[j+1]) > 0) {
+                    isSort = false;
+                }
+            }
+        }
+    }
+```
+- 函数作为返回值
+```javascript
+    // 写一个函数生成1-10之间的随机值
+    function getRandom() {
+        return parseInt(Math.random() * 10 + 1);
+    }
+    // 第一次调用生成随机数，以后每次调用返回第一次随机数
+    var random = parseInt(Math.random() * 10) + 1;
+    return function() {
+        return random;
+    }
+    var fn = function();
+    // 以后我们每次调用fn就可以了
+    console.log(fn() === fn()) // true;
+
+    // 求两个数的和
+    // 100 + m
+    // 1000 + m
+    function getFun(n) {
+        return function(m) {
+            return n + m;
+        }
+    }
 ```
