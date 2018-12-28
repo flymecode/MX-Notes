@@ -56,21 +56,34 @@
                 break;
         }
 
-        // 判斷蛇是否吃到食物
+        // 判断蛇是否吃到食物
         var headX = head.x * this.width;
         var headY = head.y * this.height;
         if(headX == food.x && headY == food.y){
-            // 讓蛇添加一節
+            // 让蛇添加一节
             var last = this.body[this.body.length -1];
-            this.body.push({
-                x: last.x,
-                y: last.y,
-                color: last.color
-            })
-            food.render(map);
-        }
+            // this.body.push({
+            //     x: last.x,
+            //     y: last.y,
+            //     color: last.color
+            // });
+            var obj = {};
+            //对象之间的拷贝
+            extend(obj,last);
+            console.dir(obj)
+            this.body.push(obj);
 
-        
+            // 在地图上随机生成新的食物
+            food.render(map);
+        }   
+    }
+
+    function extend(child,parent) {
+        for(var key in parent ) {
+            if(child[key]) continue;
+            child[key] = parent[key];
+        }
+       
     }
 
     // 私有的
@@ -84,5 +97,5 @@
 
     window.Snake = Snake;
 
-})()
+})();
 

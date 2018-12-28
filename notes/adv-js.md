@@ -290,12 +290,12 @@ Array.prototype = {
 
 [`随机生成方块案例`]()
 
-### Bind方法
-
+### Bind()、Call()
+- bind
 ```javascript
-// 函數也是對象
-// bind 新建一個方法，bind中的第一個參數可以改變函數中的this的指向。
-// bind并沒有調用
+// 函数也是对象
+// bind 新建一個方法，bind中的第一個參數可以改变函数中的this的指向。
+// bind并沒有調用，而是直接返回一个新的函数，由返回的函数去调用。
 var a = 123;
 function fn() {
     console.log(this.a);
@@ -303,7 +303,20 @@ function fn() {
 fn();
 var o = {a:'abc'};
 var fn1 = fn.bind(o);
-fn1() //相當於,o.fn()
+fn1() //相当于,o.fn() 
+
+```
+- call
+```javascript
+
+// call() 改变函数的this，并且直接调用，需要参数的时候可以直接填写。
+var a = 123;
+function fn(b) {
+    console.log(this.a+b);
+}
+fn();
+var o = {a:'abc'};
+fn.call(o,1); // abc1
 
 ```
 
@@ -338,7 +351,7 @@ var wsc = {
         if(wsc[key]) {
           continue;
         }
-        wsc[key] == wjl[key];
+        wsc[key] = wjl[key];
     }
 }
 
@@ -350,7 +363,79 @@ var wsc = {
             if(child[key]) {
             continue;
         }
-        child[key] == parent[key];
+        child[key] = parent[key];
         }
     }
+```
+
+### 继承是类型与类型之间的关系
+
+- 例一 原型继承
+```javascript
+    // 继承的目的是：把子类型中共同的成员类型提取到父类型中，实现代码重用。
+    function Person(name,age,sex) {
+        this.name = name;
+        this.age = age;
+        this.sex = sex;
+    }
+
+    function Student() {
+        this.score = 100;
+    }
+    // 原型继承的时候只能给构造函数赋值一次，以后就无法设置构造函数里的参数，赋值的时候非常不方便。
+    // 如果给原型属性赋值的时候一定要给原型设置contructor
+    Student.prototype = new Person();
+    Student.prototype.constructor = Student;
+
+
+    function Teacher() {
+
+    }
+```
+- 例二 借用构造函数
+```javascript
+    function Person(name,age,sex) {
+        this.name = name;
+        this.age = age;
+        this.sex = sex;
+    }
+
+    function Student(name, age sex, score){
+        // 能够解决继承属性
+        Person.call(this,name,age,sex);
+        this.score = score;
+    }
+
+```
+- 例三 组合继承
+```javascript
+    
+    function Person(name,age,sex) {
+        this.name = name;
+        this.age = age;
+        this.sex = sex;
+    }
+
+    Person.prototype.sayHi = function() {
+        console.log('大家好'，this.name);
+    }
+
+    function Student(name, age sex, score){
+        // 能够解决继承属性
+        Person.call(this,name,age,sex);
+        this.score = score;
+    }
+    Student.prototype = Person.prototype;
+    Student.prototype.constructor = Student;
+
+    Student.prototype.exam = function(){
+        console.log('考试');
+    }
+    // 当子类型添加特有的方法的时候，包括父类型和其它子类型都会增加该方法。
+    // 原因是子类型的prototype 都指向父类型的原型对象
+    var p = new Person('ls',18,'男');
+    // 解决办法
+    Student.prototype = new Person();
+
+
 ```
