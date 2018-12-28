@@ -1,6 +1,3 @@
----
-typora-root-url: image
----
 
 ### Java设计笔记
 
