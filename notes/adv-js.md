@@ -623,3 +623,62 @@ var wsc = {
         }
     }
 ```
+
+### 递归
+
+```javascript
+    function() {
+        if(n === 1 || n === 2) {
+            return 1;
+        }
+        return fn(n - 1) + fn(n - 2)
+    }
+```
+### 浅拷贝、深拷贝 
+```javascript
+    // 实现浅拷贝
+    for (var value in obj){
+        obj[value] = obj[value];
+    }
+
+    // 深拷贝把o1的成员给o2
+    function deepCopy(o1,o2) {
+        for(var key in obj) {
+            var item = o1[key];
+            if(item instanceof Object) {
+                o2[key] = {};
+                deepCopy(item,o2[key]);
+            } else if(item instanceof Array) {
+                var arr = [];
+            }
+            o2[key] = [];
+            deepCopy(item,o2[key]);
+        } else {
+            o2[key] = o1[key];
+        }
+    }
+```
+### 遍历DOM树
+```javascript
+
+    // 遍历指定元素的子元素
+    function loadTree(parent，callback) {
+        // 结束条件就是父元素中没有子元素
+        for(var i= 0;i < parent.children.length;i++){
+            var child = parent.children[i];
+            // console.log(child);
+            if(callback) {
+                // 处理找到的子元素
+                callback(child);
+            }
+            loadTree(child);
+        }
+    }
+    loadTree(ul,function(element) {
+        // 操作子元素
+        element.onclick = function() {
+
+        }
+    })
+
+```
