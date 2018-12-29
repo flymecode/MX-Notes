@@ -1,5 +1,6 @@
-### 手写Array
+## 数据结构
 
+## 手写Array数组
 ```java
 public class Array<E> {
 	private E[] data;
@@ -150,4 +151,71 @@ public class Array<E> {
 		return res.toString();
 	}
 }
+```
+### 手写Stack
+
+```java
+public interface Stack<E> {
+    void push(E e);
+    E pop();
+    E peek();
+    int getSize();
+    boolean isEmpty();
+}
+
+
+public class ArrayStack<E> implements Stack<E> {
+	Array<E> array;
+
+	public ArrayStack(int capacity){
+		array = new Array<>(capacity);
+	}
+	public ArrayStack(){
+		array = new Array<>();
+	}
+	@Override
+	public void push(E e){
+		array.addLast(e);
+	}
+
+	@Override
+	public E pop() {
+		return array.removeLast();
+	}
+
+	@Override
+	public E peek() {
+		return array.getLast();
+	}
+
+	@Override
+	public int getSize() {
+		return array.getSize();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return array.isEmpty();
+	}
+
+	public int getCapacity() {
+		return array.getcapacity();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder res = new StringBuilder();
+		res.append("Stack:");
+		res.append('[');
+		for (int i = 0; i < array.getSize() ; i++) {
+			res.append(array.get(i));
+			if (i != array.getSize() - 1){
+				res.append(',');
+			}
+		}
+		res.append("] top");
+		return res.toString();
+	}
+}
+
 ```
