@@ -142,4 +142,3 @@ void createDashboard(MetaDashboard dashboard);
     property = "company_id", column = "company_id", javaType = List.class,many = 		@Many(select ="com.mx.mappers.CompanyMapper.getInfoById"))
 })
 ```
-

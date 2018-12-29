@@ -109,7 +109,8 @@ public class Array<E> {
 			data[i - 1] = data[i];
 		}
 		size--;
-		if(size == data.length / 2) {
+		// 这里利用懒策略，并且数组的缩容不能为0
+		if(size == data.length / 4 && data.length / 2 != 0 ) {
 			resize(data.length / 2);
 		}
 		return ret;
