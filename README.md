@@ -14,7 +14,7 @@
 ### :pencil2:数据结构和算法
 - [LeetCode题解](https://github.com/flymecode/MX-Notes/blob/master/db-note/simple_sql.md) 
 - [排序](https://github.com/flymecode/MX-Notes/blob/master/notes/simple_sql.md) 
-- [数据结构](https://github.com/flymecode/MX-Notes/blob/master/notes/data_str.md) 
+- [数据结构](https://github.com/flymecode/MX-Notes/blob/master/notes/data-str.md) 
 
 ### :earth_africa:WEB
 - [HTML](https://github.com/flymecode/MX-Notes/blob/master/notes/simple_sql.md) 
