@@ -1,6 +1,3 @@
----
-typora-root-url: image
----
 
 ### Java设计笔记
 
@@ -145,4 +142,3 @@ void createDashboard(MetaDashboard dashboard);
     property = "company_id", column = "company_id", javaType = List.class,many = 		@Many(select ="com.mx.mappers.CompanyMapper.getInfoById"))
 })
 ```
-
