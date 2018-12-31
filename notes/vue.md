@@ -294,3 +294,24 @@ var vm = new Vue({
 });
 ```
 
+### Vue生命周期
+
+
+
+
+
+```javascript
+var vm = new Vue({
+    el:
+    data:
+    method:
+    beforCreated:
+    creted:
+    beforMount: 
+    mount:
+    beforDestrosy:
+    destorys:
+    
+})
+```
+
