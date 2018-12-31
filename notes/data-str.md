@@ -219,3 +219,153 @@ public class ArrayStack<E> implements Stack<E> {
 }
 
 ```
+
+### 应用 符号匹配
+
+```java
+
+class Solution {
+    public boolean isValid(String s) {
+		Stack<Character> stack = new Stack<>();
+        for(int i = 0; i < s.length(); i ++) {
+            String c = s.charAt(i);
+            if(c = '{' || c = '[' || c = '(') {
+                stack.push(c);
+            } else {
+                if(stack.isEmpty()) {
+                    return fase;
+                } 
+                char topChar = stack.pop();
+                if(c == ')' && topChar != '('){
+                    return false;
+                }
+                if(c == '}' && topChar != '{') {
+                    return false;
+                }
+                if(c == ']' && topChar != '[') {
+                    return false;
+                }
+            }
+            return stcak.isEmpty();
+        }
+    }
+}
+```
+
+### Queue
+
+- 队列也是一种线性结构
+- 相比数组，队列的对应操作是数组的子集
+- 只能从一端添加元素，从另一端取出元素
+
+```java
+public interface Queue<E> {
+    void enqueue(E e);
+    E dequeue();
+    E getFront();
+    int getSize();
+    boolean isEmpty();
+} 
+```
+
+
+
+```java
+public class ArrayQueue<E> implements Queue<E> {
+    private Array<E> array;
+    public ArrayQueue(int capacity) {
+        array = new Array<>(capacity);
+    }
+    public ArrayQueue() {
+        array = new Array<>();
+    }
+    @Override
+    public boolean isEmpty() {
+        return array.isEmpty();
+    }
+    @Override
+    public boid enqueue(E e) {
+        array.addLast(e);
+    }
+    @Override
+    public E dequeue() {
+        return array.removeFirst();
+    }
+    // 时间复杂度是O(nl)
+    @Override
+    public E getFront() {
+        return array.getFirst();
+    }
+    @Override
+	public int getSize() {
+		return array.getSize();
+	}
+    
+    @Override
+    public String toString() {
+        StringBuilder res = new StringBuilder();
+		res.append("Queue:");
+		res.append('front [');
+		for (int i = 0; i < array.getSize() ; i++) {
+			res.append(array.get(i));
+			if (i != array.getSize() - 1){
+				res.append(',');
+			}
+		}
+		res.append("] tail");
+		return res.toString();
+    }
+}
+```
+
+### 循环队列
+
+```java
+front == tail 队列为空
+当有元素入队的时候这时候tail ++
+当front == (tail + 1)%c 的时候对列满
+
+public class LoopQueue<E> implements Queue<E> {
+	private E[] data;
+	private int front ,tail;
+	private int size;
+	
+    public LoopQueue(int capacity) {
+    	data = (E[])new Object[capacity+1];
+    	front = 0;
+    	tail = 0;
+    	size = 0;
+    }
+    public LoopQueue() {
+    	this(10);
+    }
+    
+    public int getCapacity() {
+    	return data.length - 1;
+    }
+    
+    public boolean isEmpty() {
+    	return front == tail;
+    }
+    
+    public int getSize() {
+    	return size; 
+    }
+    
+    public void enqueue(E e) {
+    	if((tail + 1) % data.length == front) {
+        	resize(getCapacity * 2) {
+        		
+        	}
+    	}
+    }
+    
+    
+    private void resize(int newCapacity {
+    	E[] newData = (E[])new bject[newCapacity + 1];
+    	
+    }
+}
+ 
+```
+
