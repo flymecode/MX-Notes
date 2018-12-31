@@ -40,7 +40,8 @@ var param = 'username'+username;
 // 准备发送
 xhr.open('get','/user？'+codeURI(param),true);
 // 执行发送动作
-xhr.sendRequestHeader('Content-type','application/x-www-form-urlencode');         
+// 发送post的时候需要加上这个请求头
+// xhr.sendRequestHeader('Content-type','application/x-www-form-urlencode');         
 xhr.send(null);
 // 指定回掉函数
 // 浏览器来调用回掉函数，并且调用了3次，浏览器根据readyState的值的变化（1->2->3->4）来调用。
