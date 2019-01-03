@@ -226,9 +226,10 @@ public class ArrayStack<E> implements Stack<E> {
 
 class Solution {
     public boolean isValid(String s) {
+        // 存入字符，当取出的时候可以不用转换
 		Stack<Character> stack = new Stack<>();
         for(int i = 0; i < s.length(); i ++) {
-            String c = s.charAt(i);
+            char c = s.charAt(i);
             if(c = '{' || c = '[' || c = '(') {
                 stack.push(c);
             } else {
