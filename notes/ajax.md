@@ -1,3 +1,9 @@
+
+
+[TOC]
+
+
+
 ### AJAX 笔记
 
 在没有`ajax`之前实现页面局部更新的效果使用的`iframe`标签，后台相应`js`脚本，使用子页面来调用父页面的内容。 `parent.doucmnet.getElementById()`
