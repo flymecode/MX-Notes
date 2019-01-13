@@ -6,7 +6,7 @@
 
 ### :bulb:系统设计
 
-- [设计模式](https://github.com/flymecode/MX-Notes/blob/master/notes/simple_sql.md) 
+- [设计模式](https://github.com/flymecode/MX-Notes/blob/master/notes/设计模式.md) 
 - [VO 、PO、DTO、POJO](https://github.com/flymecode/MX-Notes/blob/master/notes/model.md)  简单理解
 ### :floppy_disk:数据库
 
