@@ -1,10 +1,7 @@
 [TOC]
 
-
-
-## 数据结构
-
 ## 手写Array数组
+
 ```java
 public class Array<E> {
 	private E[] data;
@@ -398,5 +395,18 @@ public class LoopQueue<E> implements Queue<E> {
     }
 }
  
+```
+
+------
+
+## 链表
+
+- 数据存储在节点中
+
+```java
+class Node {
+    E e;
+    Node next;
+}
 ```
 
