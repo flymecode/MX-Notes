@@ -410,7 +410,7 @@ class Node {
 }
 ```
 
-![1547430420395](C:\Users\maxu1\Desktop\MX-Notes\image\1547430420395.png)
+![1547430420395](https://github.com/flymecode/MX-Notes/blob/master/image/1547430420395.png)
 
 - 优点：不需要处理固定容量的问题，做到真正的动态
 - 缺点：丧失了随机访问的能力
@@ -677,6 +677,13 @@ public class LinkedListStack<E> implements Stack<E> {
 	@Override
 	public boolean isEmpty() {
 		return list.isEmpty();
+	}
+	@Override
+	public String toString() {
+		StringBuilder res = new StringBuilder();
+		res.append("Stack:top");
+		res.append(list);
+		return res.toString();
 	}
 }
 ```
