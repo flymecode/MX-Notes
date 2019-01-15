@@ -871,11 +871,11 @@ public class BST<E> extends Comparable<E> {
 		return node;
 	}
 
-	public E get(E e) {
-		return get(root, e);
+	public boolean contains(E e) {
+		return contains(root, e);
 	}
 
-	private E get(Node node, e) {
+	private boolean contains(Node node, e) {
 		if(node == null) {
 			return null;
 		}
