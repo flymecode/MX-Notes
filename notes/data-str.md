@@ -747,3 +747,45 @@ public class LinkedListQueue<E> implements Queue<E> {
 	}
 }
 ```
+### 链表与递归
+203. 移除链表元素
+删除链表中等于给定值 val 的所有节点。
+
+示例:
+
+输入: 1->2->6->3->4->5->6, val = 6
+输出: 1->2->3->4->5
+
+```java
+public class Solution {
+
+	public ListNode removeElements(ListNode head, int val) {
+		ListNode dummyHead = new ListNode(0);
+		dummyHead.next = head;
+		ListNode pre = dummyHead;
+		while(pre.next != null){
+			if(pre.next.val == val ) {
+				pre.next = pre.next.next;
+			} else {
+				pre = pre.next;
+			}
+		}
+	}
+}
+```
+
+把递归过程想成一个子函数，在子函数中写处理逻辑来解决上层函数的问题。
+
+```java
+	public class Solution {
+
+	public ListNode removeElements(ListNode head, int val) {
+		if(head == null){
+			return null;
+		}
+		head.next = removeElements(head.next,val);
+		return head.val == val? head.next: head;
+		
+	}
+}
+```
