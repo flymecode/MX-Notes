@@ -890,6 +890,51 @@ public class BST<E> extends Comparable<E> {
 			return contains(node.right,e);
 		}
 	}
-	
+
+	// 二叉树的前序遍历
+	// 应用：
+	public void preOrder() {
+		preOrder(root);
+	}
+
+	private void preOrder(Node node) {
+		if(node == null) {
+			return;
+		}
+		System.out.println(node.e);
+		preOreder(node.left);
+		preOreder(node.right);
+	}
+
+	// 顺序的排列的
+	public void inOrder() {
+		inOrder(root);
+	}
+
+	public void inOrder(Node node) {
+		if(node == null) {
+			return;
+		}
+		preOreder(node.left);
+		System.out.println(node.e);
+		preOreder(node.right);
+	}
+
+	// 后序遍历
+	// 为二分搜索释放内存
+	public void postOrder() {
+		postOrder(root);
+	}
+
+	private void postOrder(Node node) {
+		if(node == null) {
+			return;
+		}
+		preOreder(node.left);
+		preOreder(node.right);
+		System.out.println(node.e);
+	}
+
+
 }
 ```
