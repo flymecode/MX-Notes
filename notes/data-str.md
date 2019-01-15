@@ -877,17 +877,17 @@ public class BST<E> extends Comparable<E> {
 
 	private boolean contains(Node node, e) {
 		if(node == null) {
-			return null;
+			return false;
 		}
 
-		if(e.equals(node.e)){
-			return e;
+		if(e.compareTo(node.e)){
+			return true;
 		}
 
 		if (e.compareTo(node.e) < 0) {
-			return get(node.left,e);
+			return contains(node.left,e);
 		} else {
-			return get(node.right,e);
+			return contains(node.right,e);
 		}
 	}
 	
