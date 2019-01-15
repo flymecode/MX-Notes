@@ -828,12 +828,15 @@ public class BST<E> extends Comparable<E> {
 	}
 	// 添加元素
 	public void add(E e) {
-		if(root == null) {
-			root = new Node(e);
-			size ++;
-		} else {
-			add(root,e);
-		}
+		// if(root == null) {
+		// 	root = new Node(e);
+		// 	size ++;
+		// } else {
+		// 	add(root,e);
+		// }
+		
+		// 修改之后
+		root = add(root,e);
 	}
 
 	// 向以node为根的二分搜索树种插入元素E
@@ -866,7 +869,27 @@ public class BST<E> extends Comparable<E> {
 			node.right = add(node.right,e);
 		}
 		return node;
-		
 	}
+
+	public E get(E e) {
+		return get(root, e);
+	}
+
+	private E get(Node node, e) {
+		if(node == null) {
+			return null;
+		}
+
+		if(e.equals(node.e)){
+			return e;
+		}
+
+		if (e.compareTo(node.e) < 0) {
+			return get(node.left,e);
+		} else {
+			return get(node.right,e);
+		}
+	}
+	
 }
 ```
