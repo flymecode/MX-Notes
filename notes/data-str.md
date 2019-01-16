@@ -840,7 +840,7 @@ public class BST<E> extends Comparable<E> {
 	}
 
 	// 向以node为根的二分搜索树种插入元素E
-	private void add(Node node, E e) {
+	private Node add(Node node, E e) {
 		// if(root.e.equals(e)) {
 		// 	return;
 		// } else if(e.compareTo(node.e) < 0 && node.left == null) {
@@ -933,7 +933,7 @@ public class BST<E> extends Comparable<E> {
 		preOreder(node.right);
 		System.out.println(node.e);
 	}
-    // 删除最小值
+    // 最小值
     public E minimum() {
         if(size == 0){
             throw new IllegalArgumentException("BST is empty");
@@ -948,7 +948,7 @@ public class BST<E> extends Comparable<E> {
         return minimum(node.left);
     }
     
-    // 删除最大值
+    // 最大值	
     public E maximum() {
         if(size == 0){
             throw new IllegalArgumentException("BST is empty");
@@ -962,11 +962,89 @@ public class BST<E> extends Comparable<E> {
         }
         return minimum(node.right);
     }
+    // 从树中删除最小值
+    public E removeMin() {
+        E ret = minimum();
+        // 返回删除后新的根节点
+        root = removeMin(root);
+        return ret;
+    }
+    // 返回删除节点后新的二分搜索树
+    private Node removeMin(Node node) {
+        
+        if(node.left == null) {
+            Node rightNode = node.rigth;
+            node.right = null;
+            size --;
+            return rightNode;
+        }
+        node.left = removeMin(node.left);
+        return node;
+    }
+    
+     // 从树中删除最小值
+    public E removeMax() {
+        E ret = maximum();
+        // 返回删除后新的根节点
+        root = removeMax(root);
+        return ret;
+    }
+    // 返回删除节点后新的二分搜索树
+    private Node removeMax(Node node) {
+        
+        if(node.right == null) {
+            Node leftNode = node.left;
+            node.left = null;
+            size --;
+            return leftNode;
+        }
+        node.right = removeMin(node.right);
+        return node;
+    }
+    
+    // 删除某一结点
+    public void remove(E e) {
+        root = remove(root);
+    }
+    private Node remove(Node node, E e) {
+        if(node == null) {
+            return null;
+        }
+        if(e.compareTo(node.e) < 0) {
+            node.left = remove(node.left,e);
+            return node;
+        } else if(e.compareTo(node.e) > 0) {
+            node.right = remove(node.right,e);
+            return node;
+        } else {
+            // 3种情况
+            if(node.left == null) {
+                Node rightNode = node.right;
+                node.right = null;
+                size --;
+                return rightNode;
+            }
+            if(node.right == null) {
+                Node leftNode = node.left;
+                node.left = null;
+                size --;
+                return leftNode;
+            }
+            // 当左右子树都不为空的时候
+            Node successor = minimum(node.right);
+            // 这里我们进行了删除size进行了减操作
+            successor.right = removeMin(node.right);
+            successor.left = node.left;
+            node.left = node.right = null;
+            return successor;
+        }
+        
+    }
 }
 ```
 ### 前序遍历非递归
 ```java
-	// 首先将节点压入栈中，如果栈不为空这弹出栈顶元素，并将左右孩子压入栈中，首先压入左孩子然后压入右孩子
+// 首先将节点压入栈中，如果栈不为空这弹出栈顶元素，并将左右孩子压入栈中，首先压入左孩子然后压入右孩子
 	public void preOrder() {
 		Stack<Node> stack = new Stack<>();
 		stack.push(root);
@@ -1003,3 +1081,334 @@ public void levelOrder() {
     }
 }
 ```
+
+## Set 
+
+```java
+// 应用：客户统计、词汇量统计
+public interface Set<E> {
+    void add(E e); // 不能添加重复元素
+    void remove(E e);
+    boolean contains(E e);
+    int getSize();
+    boolean isEmpty();
+}
+```
+
+### BST实现集合
+
+```java
+//平均时间复杂度O(logn)
+public class BSTSet<E extends Comparable<E>> implements Set<E> {
+    private BST<E> bst;
+    public BSTSet() {
+        bst = new BST<>();
+    }
+    @Override
+    public int getSize() {
+        return bst.size();
+    }
+    @Override
+    public boolean isEmpty() {
+        return bst.isEmpty();
+    }
+    @Override
+    public void add(E e) {
+        bst.add(e);
+    }
+    @Override
+    public boolean contains(E e) {
+        return bst.contains(e);
+    }
+}
+```
+
+### 链表实现集合
+
+```java
+// 平均时间复杂度O(n)
+public class LinkedListSet<E> implements Set<E> {
+    private LinkedList<E> list;
+    
+    public LinkListSet() {
+        list = new LinkedList<>();
+    }
+    @Override
+    public int getSize() {
+        return list.size();
+    }
+    @Override
+    public boolean isEmpty() {
+        return list.isEmpty();
+    }
+    @Override
+    public void add(E e) {
+        if(!list.contains(e)) {
+            list.addFirst(e);
+        }
+    }
+    @Override
+    public boolean contains(E e) {
+        return list.contains(e);
+    }
+    @Override
+    public void remove(E e) {
+        list.removeElement(e);
+    }
+}
+```
+
+## Map
+
+```java
+public interface Map<K,V> {
+    void add(K key,V value);
+    V remove(K key);
+    boolean contains(K key);
+    V get(K key);
+    void set(K key,V value);
+    int getSize();
+    boolean isEmpty();
+}
+```
+
+#### 链表实现Map
+
+```java
+// 平均时间复杂度O(n)
+public class LinkedListMap<K,V> implements Map<K,V> {
+    private class Node {
+       public K key;
+       public V value;
+       public Node next;
+        
+       public Node(K key, V value, Node next) {
+            this.key = key;
+            this.value = value;
+            this.next = next;
+        }
+        public Node(K key){
+            this(key,null,null);
+        }
+        public Node() {
+            this(null,null,null);
+        }
+        @Override
+        public String toString() {
+            return key.toString() + ":" + value.toString();
+        }
+   }
+    
+    private Node dummyHead;
+    private int size;
+    
+    public LinkedListMap() {
+        dummyHead = new Node();
+        size = 0;
+    }
+    
+    @Override 
+    public int getSize() {
+        return size;
+    }
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
+    private Node getNode(K key) {
+        Node cur = dummyHead.next;
+        while(cur != null) {
+            if(cur.key.equals(key)){
+                return cur;
+            }
+            cur = cur.next;
+        }
+        return null;
+    }
+    
+    @Override
+    public boolean contains(K key) {
+        return getNode(key) != null;
+    }
+    @Override
+    public V get(K key) {
+        Node node = getNode(key);
+        return node == null ? null : node.value;
+    }
+    @Override
+    public void add(K key, V value) {
+        Node node = getNode(key);
+        if(node == null) {
+            // 头插法
+            dummyHead.next = new Node(key,value,dummyHead.next);
+            size ++;
+        } else {
+            node.value = value;
+        }
+    }
+    @Override
+    public void set(K key, V value) {
+        Node node = getNode(key);
+        if(node == null) {
+            throw new IllegalArgumentException(key + "doesn't exist !");
+        }
+        node.value = value;
+    }
+    @Override
+    public V remove(Key key) {
+        Node prev = dummyHead;
+        // 寻找删除节点的前驱
+        while(prev.next != null) {
+            if(prev.next.key.equals(key)){
+                break;
+            }
+            prev = prev.next;
+        }
+        if(prev.next != null) {
+            Node delNode = prev.next;
+            prev.next = delNode.next;
+            delNode.next = null;
+            return delNode.value;
+        }
+        return null;
+    }
+}
+```
+
+#### 二分搜索树实现Map
+
+```java
+// 平均时间复杂度O（logn）
+public class BSTMap<K extends Comparable<K>, V> implements Map<K, V> {
+	private class Node {
+		public K key;
+		public V value;
+		public Node left, right;
+
+		public Node(K key, V value) {
+			this.key = key;
+			this.value = value;
+			left = null;
+			right = null;
+		}
+	}
+
+	private Node root;
+	private int size;
+
+	public BSTMap() {
+		root = null;
+		size = 0;
+	}
+
+	@Override
+	public int size() {
+		return size;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return size == 0;
+	}
+
+	@Override
+	public boolean contains(K key) {
+		return getNode(root, key) != null;
+	}
+
+	// 添加元素
+	@Override
+	public void add(K key, V value) {
+		root = add(root, key, value);
+	}
+
+	// 向以node为根的二分搜索树种插入元素E
+	private Node add(Node node, K key, V value) {
+		// 当我们递归到null的时候就一定要创建一个节点
+		if (node == null) {
+			size++;
+			return new Node(key, value);
+		}
+		if (key.compareTo(node.key) < 0) {
+			node.left = add(node.left, key, value);
+		} else if (key.compareTo(node.key) > 0) {
+			node.right = add(node.right, key, value);
+		} else {
+			node.value = value;
+		}
+		return node;
+	}
+
+	private Node getNode(Node node, K key) {
+		if (node == null) {
+			return null;
+		}
+		if (key.compareTo(node.key) < 0) {
+			return getNode(node.left, key);
+		} else if (key.compareTo(node.key) > 0) {
+			return getNode(node.right, key);
+		} else {
+			return node;
+		}
+	}
+
+	@Override
+	public V get(K key) {
+		Node node = getNode(root, key);
+		return node == null ? null : node.value;
+	}
+
+	@Override
+	public void set(K key, V value) {
+		Node node = getNode(root, key);
+		if (node == null) {
+			throw new IllegalArgumentException(key + "doesn't exist !");
+		}
+		node.value = value;
+	}
+
+	public V remove(K key) {
+		Node node = getNode(root, key);
+		if (node != null) {
+			root = remove(root, key);
+			return node.value;
+		}
+		return null;
+	}
+
+	private Node remove(Node node, K key) {
+		if (node == null) {
+			return null;
+		}
+		if (key.compareTo(node.key) < 0) {
+			node.left = remove(node.left, key);
+			return node;
+		} else if (key.compareTo(node.key) > 0) {
+			node.right = remove(node.right, key);
+			return node;
+		} else {
+			// 3种情况
+			if (node.left == null) {
+				Node rightNode = node.right;
+				node.right = null;
+				size--;
+				return rightNode;
+			}
+			if (node.right == null) {
+				Node leftNode = node.left;
+				node.left = null;
+				size--;
+				return leftNode;
+			}
+			// 在BST上有实现的方法
+			Node successor = minimum(node.right);
+			// 这里我们进行了删除size进行了减操作
+			successor.right = removeMin(node.right);
+			successor.left = node.left;
+			node.left = node.right = null;
+			return successor;
+		}
+	}
+}	
+```
+
