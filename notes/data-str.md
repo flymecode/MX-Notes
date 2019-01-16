@@ -686,7 +686,7 @@ public class LinkedListStack<E> implements Stack<E> {
 		return res.toString();
 	}
 }
-```java
+​```java
 public class LinkedListQueue<E> implements Queue<E> {
 	private class Node {
  		public E e;
@@ -892,7 +892,6 @@ public class BST<E> extends Comparable<E> {
 	}
 
 	// 二叉树的前序遍历
-	// 应用：
 	public void preOrder() {
 		preOrder(root);
 	}
@@ -934,7 +933,73 @@ public class BST<E> extends Comparable<E> {
 		preOreder(node.right);
 		System.out.println(node.e);
 	}
+    // 删除最小值
+    public E minimum() {
+        if(size == 0){
+            throw new IllegalArgumentException("BST is empty");
+        }
+        return minimum(root).e;
+    }
+    // 返回已node为根的二分搜索树的最小值所在的节点
+    private Node minimum(Node node) {
+        if(node.left == null) {
+            return node;
+        }
+        return minimum(node.left);
+    }
+    
+    // 删除最大值
+    public E maximum() {
+        if(size == 0){
+            throw new IllegalArgumentException("BST is empty");
+        }
+        return maximum(root).e;
+    }
+    // 返回已node为根的二分搜索树的最小值所在的节点
+    private Node maximum(Node node) {
+        if(node.right == null) {
+            return node;
+        }
+        return minimum(node.right);
+    }
+}
+```
+### 前序遍历非递归
+```java
+	// 首先将节点压入栈中，如果栈不为空这弹出栈顶元素，并将左右孩子压入栈中，首先压入左孩子然后压入右孩子
+	public void preOrder() {
+		Stack<Node> stack = new Stack<>();
+		stack.push(root);
 
+		if(!stack.isEmpty()){
+			Node node = stack.pop();
+			System.out.println(node.e);
+			if(node.left != null){
+				stack.push(node.left);
+			}
+			if(node.right != null){
+				stack.push(node.right);
+			}
+		}
+	}
+```
 
+### 层序遍历
+
+```java
+// 利用队列
+public void levelOrder() {
+    Queue<Node> q = new LinkedList<>();
+    q.add(root);
+    while(!q.isEmpty()) {
+        Node cur = q.remove();
+        System.out.println(cur.e);
+        if(cur.left != null) {
+            q.add(cur.left);
+        }
+        if(cur.right != null) {
+            q.add(cur.right);
+        }
+    }
 }
 ```
