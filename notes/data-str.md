@@ -1412,3 +1412,48 @@ public class BSTMap<K extends Comparable<K>, V> implements Map<K, V> {
 }	
 ```
 
+我们可以通过映射来包装成映射。
+
+
+
+### 优先队列
+
+|              | 入队    | 出队    |
+| ------------ | ------- | ------- |
+| 普通线性结构 | O(1)    | O(N)    |
+| 顺序线性结构 | O(N)    | O(1)    |
+| 堆           | O(logn) | O(logn) |
+
+### 使用数组完成堆的结构
+
+```java
+public class MaxHeap<E extends Comparable<E>> {
+    private Array<E> data;
+    public MaxHeap(int capacity){
+        data = new Array<>(capacity);
+    }
+    
+    public int size(){
+        return data.size();
+    }
+    public boolean isEmpty(){
+        return data.isEmpty();
+    }
+    // 返回完全二叉树的数组表示中，一个索引所表示的元素的父亲节点的索引
+    private int parent(int index){
+        if(index == 0){
+            throw new IllegalArgumentException("index -0 doesn't have parent");
+        }
+        return (index-1)/2;
+    }
+    //返回完全二叉树的数组表示中，一个索引所表示的元素的左孩子节点的索引
+    private int leftChild(int index){
+        return 2 * index + 1;
+    }
+     //返回完全二叉树的数组表示中，一个索引所表示的元素的右孩子节点的索引
+    private int leftChild(int index){
+        return 2 * index + 2;
+    }
+}
+```
+
