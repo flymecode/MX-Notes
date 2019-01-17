@@ -1457,3 +1457,167 @@ public class MaxHeap<E extends Comparable<E>> {
 }
 ```
 
+### Sift Up 上浮
+
+```java
+// 向堆中添加元素
+public void add(E e) {
+    data.addLast(e);
+    siftUp(data.getSize() - 1);
+}
+private void siftUp(int k){
+    while(k > 0 && data.get(parent(k)).compareTo(data.get(k)) < 0) {
+        // 在data里实现swap
+        data.swap(k, parent(k));
+        k = parent(k);
+    }
+}
+```
+
+### Sift Down
+
+```java
+public E findMax() {
+    if(data.getSize() == 0) {
+        throw new IllegalArumentException("Con not findMax");
+    }
+    return data.get(0);
+}
+public E getMax() {
+    E e = findMax();
+    data.swap(0,data.size() - 1);
+    data.removeLast();
+    
+    siftDown(0);
+    return e;
+}
+private void siftDown(int k) {
+    // 左孩子索引比右孩子索引大的时候循环终止
+    while(leftChild(k) < data.getSize()) {
+        // 保存要交换的索引值
+        int j = leftChild(k);
+        // 说明有右孩子，并且右孩子的值比左孩子大，那么j++
+        if( j + 1 < data.getSize() && data.get(j+1).compareTo(data.get(j) > 0)) {
+            j ++;
+        }
+        // 如果当前节点比两个孩子节点中的最大值还要大的时候跳出循环
+        if(data.get(k).compareTo(data.get(j)) >= 0) {
+            break;
+        }
+        // 下沉操作
+        data.swap(i,j);
+        // 节点索引值改变
+        k = j;
+    }
+}
+```
+
+### replace
+
+- 取出最大元素之后，放入一个新的元素
+- 实现： 可以先extractMax,在add,两次O(logn)的操作
+- 实现： 可以直接将堆顶替换之后进行siftDown,一次O(logn)的操作
+
+```java
+public E replace(E e) {
+    E ret = findMax();
+    data.set(0,e);
+    siftDown(0);
+    return ret;
+}
+```
+
+### heapify
+
+- 将任意的数组整理成堆的形状
+- 实现：从最后一个非叶子节点之前的元素进行siftdown操作。
+- 找到最后一个非叶子节点，就是最后一个节点的父亲节点。
+
+```java
+public MaxHeap(E[] arr) {
+    data = new Array<>(arr);
+    for(int i = parent(arr.length - 1); i >= 0; i--) {
+        siftDown(i);
+    }
+}
+// 在arry中构造
+pullic Array(E[] arr) {
+    data = (E[])new Object[arr.length];
+    for(int i = 0; i < arr.length; i++) {
+        data[i] = arr[i];
+    }
+}
+```
+
+### 优先队列PriorityQueue
+
+```java
+public class PriorityQueue<E extends Comparabel<E>> implements Queue {
+    private MaxHeap<E> maxHeap;
+    public PriorityQueue() {
+        maxHeap = new MaxHeap();
+    }
+    public int getSize(){
+        return maxHeap.size();
+    }
+    public boolean isEmpty() {
+        return maxHeap.isEmpty();
+    }
+    public E getFront() {
+        return maxHeap.findMax();
+    }
+    public void enqueue(E e) {
+        maxHeap.add(e);
+    }
+    public void dequeue() {
+        return maxhHeap.extractMax();
+    }
+}
+```
+
+在N个元素中选出前M个元素？
+
+```JAVA
+class Solution {
+	private class Freq implements Comparable<Freq> {
+		int e,freq;
+		public Freq(int e,int freq) {
+			this.e = e;
+			this.freq = freq;
+		}
+		@Override
+		public int compareTo(Freq another) {
+			return this.freq - another.freq;
+		}
+	}
+    public List<Integer> topKFrequent(int[] nums, int k) {
+        
+        Map<Integer> map = new TreeMap<>();
+        for(int key: map) {
+            if(map.containKey(value)) {
+                map.put(key,map.get(key) + 1);
+            } else {
+                map.put(key,1);
+            }
+        }
+		
+		
+		
+        PriorityQueue<Freq> queue = new PriorityQueue<>();
+		for(int key:map.keySet()) {
+			if(queue.getSize() < k){
+				queue.enqueue(new Freq(key,map.get(key));
+			} else if(map.get(key) > queue.getFront().freq){
+				queue.dequeue();
+				queue.enqueue(new Freq(key,map.get(key)));
+			}
+		}
+		LinkedList<Integer> res = new LinkedList<>();
+		while(!queue.isEmpty())
+		res.add(pq.dequeue().e);
+		return res;
+    }
+     
+}
+```
+
