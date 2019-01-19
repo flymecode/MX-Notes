@@ -6,11 +6,100 @@
 >
 > 非线程安全问题存在与实例变量中。如果是方法内部的私有变量，则不存在非线程安全问题。因为方法内部的变量是私有的。
 
-### synchronized同步方法
+### Synchronized同步方法
 
 ##### 作用：能够保证在同一时刻最多只有一个线程执行该段代码，以达到并发安全的效果。
 
-- synchronized获取的锁都是对象锁。
+### Synchronized的两个作用
+
+- 对象锁
+
+  - 包括方法锁（默认锁对象为this当前的实例对象）
+
+  ```java
+  public void run() {
+      // 默认当前实例为锁对象
+      synchronized(this) {
+          System.out.println(Thread.currentThread().getName() + "运行开始");
+          try{
+              Thread.sleep(3000);
+          } catch(InterruptedException e) {
+              e.printStackTrace();
+          }
+          System.out.println(Thread.currentThread().getName() + "运行结束")；
+      }
+  }
+  ```
+
+  ```java
+  // 锁对象默认为this
+  public synchronized void method() {
+     System.out.println(Thread.currentThread().getName() + "运行开始");
+      try{
+          Thread.sleep(3000);
+      } catch(InterruptedException e) {
+          e.printStackTrace();
+      }
+       System.out.println(Thread.currentThread().getName() + "运行开始");
+  }
+  ```
+
+
+
+  - 同步代码块锁（自己指定锁对象）
+
+  ```java
+  // 定义锁
+  Object lock = new Object();
+  public void run() {
+      synchronized(lock) {
+          System.out.println(Thread.currentThread().getName() + "运行开始")
+          try{
+              Thread.sleep(3000);
+          } catch(InterruptedException e) {
+              e.printStackTrace();
+          }
+          System.out.println(Thread.currentThread().getName() + "运行结束")；
+      }
+  }
+  ```
+
+- 类锁 （java类可以有很多个对象，但只有一个Class对象）
+
+  - 所谓类锁，就是对Class对象加锁
+  - synchronized修饰的静态的方法
+
+  ```java
+  // 锁对象默认为类对象，多个实例访问该方法的时候是顺序执行的
+  public static synchronized void method() {
+     System.out.println(Thread.currentThread().getName() + "运行开始");
+      try{
+          Thread.sleep(3000);
+      } catch(InterruptedException e) {
+          e.printStackTrace();
+      }
+       System.out.println(Thread.currentThread().getName() + "运行开始");
+  }
+  ```
+
+  - 指定锁对象为Class对象
+
+  ```java
+  // 定义Class锁
+  public void run() {
+      synchronized(xxx.class) {
+          System.out.println(Thread.currentThread().getName() + "运行开始")
+          try{
+              Thread.sleep(3000);
+          } catch(InterruptedException e) {
+              e.printStackTrace();
+          }
+          System.out.println(Thread.currentThread().getName() + "运行结束")；
+      }
+  }
+  ```
+
+
 - A线程先持有`object`的锁，B线程可以以异步的方式调用`object`中的非`synchronized`修饰的方法。
 - A线程先持有`object`的锁，B线程可以以异步的方式调用`object`对象中的`synchronized`修饰的方法则需要等待，也就是`同步`。
 
@@ -33,6 +122,8 @@ class xxx {
 - 出现异常时锁会被自动释放。
 
 - 同步不能继承，尽管父类的方法加`synchronized`关键字，但是子类要使用此方法还要加
+
+### 线程调试技巧
 
 
 
