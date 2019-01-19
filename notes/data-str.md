@@ -1600,9 +1600,6 @@ class Solution {
                 map.put(key,1);
             }
         }
-		
-		
-		
         PriorityQueue<Freq> queue = new PriorityQueue<>();
 		for(int key:map.keySet()) {
 			if(queue.getSize() < k){
@@ -1617,7 +1614,73 @@ class Solution {
 		res.add(pq.dequeue().e);
 		return res;
     }
-     
+}
+```
+
+### 比较器
+
+用户可以自定义比较方式
+
+```java
+// 使用匿名内部类简化代码
+PriorityQueue<Freq> pq = new PriorityQueue<>(new Comparator<Freq>() {
+    @Override
+    public int compare(Freq a,Freq b) {
+        return a.freq - b.freq;
+    }
+})；
+
+// 变量补获
+PriorityQueue<Integer> pq = new PriorityQueue<>(new Comparator<Freq>() {
+    @Override
+    public int compare(Integer a,Integer b) {
+    	// 可以获取全局变量中不可变得值
+        return map.get(a) - map.get(b);
+    }
+})；
+// lamdar
+PriorityQueue<Integer> pq = new PriorityQueue<>(
+    (a,b) -> map.get(a) - map.get(b)
+)；
+```
+
+### 线段树（区间树）Segment Tree
+
+##### 为什么使用线段树？
+
+实质：基于区间的统计查询
+
+问题：区间染色问题
+
+线段树是平衡二叉树
+
+线段树不是完全二叉树
+
+对一颗树来说，最大的深度和最小的深度最大差距为1
+
+```java
+public class SegmentTree<E> {
+    private E[] data;
+    private E[] tree;
+    public SegmentTree(E[] arr) {
+        data = new Object[arr.length];
+        tree = (E[]) new Object[4 * arr.length];
+    }
+    for(int i = 0; i < arr.length;i++) {
+        data[i] = arr[i];
+    }
+    public int getSize() {
+        return data.length;
+    }
+    public E get(int index){
+        return data[index];
+    }
+    private int leftChild(int index) {
+        return 2 * index + 1;
+    }
+    private int rightChild(int index) {
+        return 2 * index + 2;
+    }
 }
 ```
 
