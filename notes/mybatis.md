@@ -79,3 +79,105 @@ SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(confi
    session.close();
   }
   ```
+
+### mybatis使用
+
+|                        |                            |
+| ---------------------- | -------------------------- |
+| %${**user.username**}% | 可以用来连接字符           |
+| #{user.name}           | 用来取值                   |
+| where标签              | 用来处理多余的and          |
+| if                     | 用来判断条件在test中写条件 |
+|                        |                            |
+
+```xml
+<!-- foreach循环标签
+ collection:要遍历的集合，来源入参
+ open:循环开始前的sql 
+ separator:分隔符
+ close:循环结束拼接的sql
+-->
+<foreach item="uid" collection="ids" open="id IN(" separator=","close=")">
+        #{uid}
+</foreach>
+<!-- 一对一关联查询-resultMap -->
+<resultMap type="order" id="order_user_map">
+    <!-- id标签用于绑定主键 -->
+    <id property="id" column="id"/>
+    <!-- 使用result绑定普通字段 -->
+    <result property="userId" column="user_id"/>
+    <result property="number" column="number"/>
+    <result property="createtime" column="createtime"/>
+    <result property="note" column="note"/>
+
+    <!-- association:配置一对一关联
+     property:绑定的用户属性
+     javaType:属性数据类型，支持别名
+    -->
+    <association property="user" javaType="com.itheima.mybatis.pojo.User">
+        <id property="id" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="address" column="address"/>
+        <result property="sex" column="sex"/>
+    </association>
+</resultMap>
+
+
+<select id="getOrderUser2" resultMap="order_user_map">
+    SELECT
+      o.`id`,
+      o.`user_id`,
+      o.`number`,
+      o.`createtime`,
+      o.`note`,
+      u.`username`,
+      u.`address`,
+      u.`sex`
+    FROM `order` o
+    LEFT JOIN `user` u
+    ON u.id = o.`user_id`
+</select>
+<!-- 一对多关联查询 -->
+<resultMap type="user" id="user_order_map">
+    <id property="id" column="id" />
+    <result property="username" column="username" />
+    <result property="birthday" column="birthday" />
+    <result property="address" column="address" />
+    <result property="sex" column="sex" />
+    <result property="uuid2" column="uuid2" />
+
+    <!-- collection:配置一对多关系
+     property:用户下的order属性
+     ofType:property的数据类型，支持别名
+    -->
+    <collection property="orders" ofType="order">
+    <!-- id标签用于绑定主键 -->
+    <id property="id" column="oid"/>
+    <!-- 使用result绑定普通字段 -->
+    <result property="userId" column="id"/>
+    <result property="number" column="number"/>
+    <result property="createtime" column="createtime"/>
+    </collection>
+</resultMap>
+<!-- 一对多关联查询 -->
+<select id="getUserOrder" resultMap="user_order_map">
+SELECT
+    u.`id`,
+    u.`username`,
+    u.`birthday`,
+    u.`sex`,
+    u.`address`,
+    u.`uuid2`,
+    o.`id` oid,
+    o.`number`,
+    o.`createtime`
+    FROM `user` u
+	LEFT JOIN `order` o
+	ON o.`user_id` = u.`id`
+</select>
+<!-- 返回插入的Id -->
+<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+SELECT LAST_INSERT_ID() AS id
+</selectKey>
+```
+
