@@ -1,4 +1,4 @@
-![](https://github.com/flymecode/MX-Notes/blob/master/logo.jpg)
+<p align='center'>![](https://github.com/flymecode/MX-Notes/blob/master/logo.jpg)</p>
 
 |       Ⅰ       |                     Ⅱ                      |              Ⅲ               |              Ⅳ              |              Ⅴ              |              Ⅵ              |
 | :-----------: | :----------------------------------------: | :--------------------------: | ---------------------------- | ---------------------------- | ---------------------------- |
