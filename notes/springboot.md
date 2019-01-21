@@ -151,3 +151,74 @@ public class ApplicationTests {
 通过上面这个简单的例子，我们可以看到在Spring Boot下访问数据库的配置依然秉承了框架的初衷：简单。我们只需要在pom.xml中加入数据库依赖，再到application.properties中配置连接信息，不需要像Spring应用中创建JdbcTemplate的Bean，就可以直接在自己的对象中注入使用。
 
 转自[程序员DD](http://blog.didispace.com/springbootdata1/)
+
+
+
+### Springboot 的异常处理
+
+在日常web开发中发生了异常，往往是需要通过一个统一的异常处理来保证客户端能够收到友好的提示。
+
+##### 单个控制器异常
+
+@ExceptionHandler可用于控制器中，表示处理当前类的异常。
+
+```
+@ExceptionHandler(Exception.class)
+public String exceptionHandler(Exception e) {
+    log.error("---------------->捕获到局部异常", e);
+    return "index";
+}
+```
+
+##### 全局异常
+
+如果单使用@ExceptionHandler，只能在当前Controller中处理异常。但当配合@ControllerAdvice一起使用的时候，就可以摆脱那个限制了。
+
+
+
+可通过@ExceptionHandler的参数进行异常分类处理。
+
+
+
+**步骤：**
+
+第一步、自定义异常
+
+```
+public class MyException extends Exception {
+
+
+    public MyException(String message) {
+        super(message);
+    }
+}
+```
+
+
+
+第二步、定义全局处理器，主要是@ControllerAdvice和@ExceptionHandler注解的运用
+
+```
+@Slf4j
+@ControllerAdvice
+public class GlobalExceptionHandler {
+    @ExceptionHandler(value = Exception.class)
+    public ModelAndView defaultErrorHandler(HttpServletRequest req, Exception e)  {
+        log.error("------------------>捕捉到全局异常", e);
+        
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("exception", e);
+        mav.addObject("url", req.getRequestURL());
+        mav.setViewName("error");
+        return mav;
+    }
+
+
+    @ExceptionHandler(value = MyException.class)
+    @ResponseBody
+    public R jsonErrorHandler(HttpServletRequest req, MyException e)  {
+        //TODO 错误日志处理
+        return R.fail(e.getMessage(), "some data");
+     }
+
+```
