@@ -181,3 +181,30 @@ SELECT LAST_INSERT_ID() AS id
 </selectKey>
 ```
 
+### SqlSessionTemplate
+
+SqlSessionTemplate是MyBatis-Spring的核心。这个类负责管理MyBatis的SqlSession,调用MyBatis的SQL方法，翻译异常。SqlSessionTemplate是线程安全的，可以被多个DAO所共享使用。
+
+当调用SQL方法时，包含从映射器getMapper()方法返回的方法，SqlSessionTemplate将会保证使用的SqlSession是和当前Spring的事务相关的。此外，它管理session的生命周期，包含必要的关闭，提交或回滚操作。
+
+SqlSessionTemplate实现了SqlSession，这就是说要对MyBatis的SqlSession进行简易替换。
+
+SqlSessionTemplate通常是被用来替代默认的MyBatis实现的DefaultSqlSession，因为它不能参与到Spring的事务中也不能被注入，因为它是线程不安全的。相同应用程序中两个类之间的转换可能会引起数据一致性的问题。
+
+SqlSessionTemplate对象可以使用SqlSessionFactory作为构造方法的参数来创建。
+
+```xml
+<!-- 创建sqlSessionFactoryBean -->
+ <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
+  p:dataSource-ref="dataSource" p:configLocation="classpath:mybatis-config.xml"
+  p:mapperLocations="classpath:com/mf/*/entity/mapper/*.xml"
+  p:plugins-ref="pagePlugin" />
+
+ <!-- 配置sqlSessionTemplate -->
+ <bean class="org.mybatis.spring.SqlSessionTemplate">
+  <constructor-arg ref="sqlSessionFactory" />
+ </bean>
+```
+
+[原文](https://blog.csdn.net/develop_wangzhi/article/details/51064992 )
+
