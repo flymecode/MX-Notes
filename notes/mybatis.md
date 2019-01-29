@@ -208,3 +208,15 @@ SqlSessionTemplate对象可以使用SqlSessionFactory作为构造方法的参数
 
 [原文](https://blog.csdn.net/develop_wangzhi/article/details/51064992 )
 
+#### Mybatis一次插入多条记录
+
+```xml
+<insert id="insertList" parameterType="java.util.List">
+        insert into balance(balance_date,money,fm_id) values
+        <!--item就是List里每一项的对象名，要用","分割每一条数据，最后要";"结尾-->
+        <foreach collection="list" item="balance" separator="," close=";">
+            (#{balance.balanceDate},#{balance.money},#{balance.fmId})
+        </foreach>
+    </insert>
+```
+
