@@ -225,3 +225,90 @@ public class GlobalExceptionHandler {
 
 ### Mybatis配置多数据源
 
+
+
+### 定时任务和异步任务
+
+```java
+
+@EnableAsync// 开启异步注解
+@EnableScheduling // 开启定时任务
+@SpringBootApplication
+public class SpringbootTaskApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringbootTaskApplication.class, args);
+	}
+
+}
+```
+
+```java
+@Service
+public class AsyncService {
+	// 这是一个异步方法
+	@Async
+	public void hello() {
+		System.out.println("hello...");
+	}
+}
+```
+
+```java
+/**
+ * 定时任务
+ * @author maxu
+ */
+@Service
+public class ScheduleService {
+	// @Scheduled(cron = "* * * * * * ") 任意
+	// @Scheduled(cron = "0,1,2,3,4 * * * * * ") 枚举
+	// @Scheduled(cron = "0-5 * * * * * ") 范围
+	@Scheduled(cron = "0/5 * * * * * ") 
+	public void hello() {
+		System.out.println("hello......");
+	}
+}
+```
+
+
+
+
+
+### Security
+
+```java
+/**
+ * @author maxu
+ */
+public class MySecurityConfig extends WebSecurityConfigurerAdapter {
+
+    // 授权
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.authorizeRequests().antMatchers("/").permitAll()
+				.antMatchers("/level1/**").hasRole("VIP1")
+				.antMatchers("/level2/**").hasRole("VIP2")
+				.antMatchers("/level3/**").hasRole("VIP3");
+
+		//开启自动配置的登陆请求,并设置登陆页面
+		http.formLogin().usernameParameter("user")
+                .passwordParameter("pwd")
+                .loginPage("/userLogin")
+            	.loginProcessingUrl("login");
+		// 开启自动配置的注销功能，注销成功来到首页
+		http.logout().logoutSuccessUrl("/");
+		// 开启记住我，并设置参数
+		http.rememberMe().rememberMeParameter("rememberMe");
+	}
+	// 认证
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.inMemoryAuthentication()
+				.withUser("admin").password("123").roles("VIP1", "VIP2")
+				.and()
+				.withUser("admin1").password("1235").roles("VIP1", "VIP3")	;
+	}
+}
+```
+

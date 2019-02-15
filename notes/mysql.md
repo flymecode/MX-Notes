@@ -91,3 +91,26 @@ mysql创建复合索引首先对sql最左边的索引字段进行排序，在排
 
 更多的索引意味着也需要更多的空间
 
+
+
+锁模块
+
+查询隔离级别
+
+select @@ tx_isolation
+
+设置隔离级别
+
+set session transaction isolation level read uncommitted
+
+![1550218906156](C:\Users\maxu1\Desktop\MX-Notes\notes\1550218906156.png)
+
+![1550221752136](C:\Users\maxu1\Desktop\MX-Notes\notes\1550221752136.png)
+
+![1550223134805](C:\Users\maxu1\Desktop\MX-Notes\notes\1550223134805.png)
+
+![1550223906919](C:\Users\maxu1\Desktop\MX-Notes\notes\1550223906919.png)
+
+![1550224011169](C:\Users\maxu1\Desktop\MX-Notes\notes\1550224011169.png)
+
+![1550224407677](C:\Users\maxu1\Desktop\MX-Notes\notes\1550224407677.png)
