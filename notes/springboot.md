@@ -152,6 +152,139 @@ public class ApplicationTests {
 
 转自[程序员DD](http://blog.didispace.com/springbootdata1/)
 
+### 缓存
+
+- EnableCaching 开启基于注解的缓存模式
+- Cacheable 主要针对方法的配置，能够将方法的返回结果缓存起来
+- CachePut  保证方法被调用，又能将结果缓存起来，常常用来更新缓存
+  - 运行时机
+    - 先调用方法
+    - 将目标方法的结果缓存起来
+- CacheEvict 清除缓存
+
+##### Cacheable属性
+
+- cacheNames / value 指定缓存组件的名称
+- key 缓存数据使用的key ,默认使用方法参数的值，也可以指定
+
+```java
+@Cacheable(key = "#root.cacheNames+'['+#id+']'")
+public String sayHello(Integer id) {...}
+```
+
+- condition 指定符合条件的清空下才缓存
+
+```java
+@Cacheable(condition="#a0 > 1") 当第一个参数大于1的时候缓存
+public String sayHello(Integer id) {...}
+```
+
+- unless  否定缓存，当unless指定的条件为true的时候，方法的返回值就不会被缓存
+- keyGenerator :key的生成器 key/keyGenerator二选一
+- sync 是否启用异步模式，当时用异步模式的时候，unless属性就不能使用了
+
+
+
+##### 缓存更新不一致问题解决
+
+原因有可能我们缓存的key不一致导致的，虽然将数据放入缓存中，但是key不一致导致我们更新之后，再次访问的数据还是之前缓存的旧数据。所以我们应该统一缓存的key
+
+```java
+@CachePut(value = "emp" ,key = "#result.id")
+// @CachePut(value = "emp" ,key = "#user.id")
+@Cacheable 是不能使用result的，因为result是方法执行之后返回的结果。
+public String updateUser(User user) {...}
+```
+
+
+
+##### 清除缓存@CacheEvict
+
+- allEntries 指定清除缓存中的所有数据
+- beforeInvocation = false 缓存的清除是是否实在方法之前执行，默认代表缓存清楚操作是在方法执行之后执行，如果出现异常就不会清除。
+
+##### 组合缓存@Caching
+
+针对复杂的缓存
+
+```java
+	@Caching(
+			cacheable = {
+					@Cacheable(value = "user", key = "#name")
+			},
+			put = {
+					@CachePut(value = "user", key = "#result.id"),
+					@CachePut(value = "user", key = "#result.email")
+			}
+	)
+	public String updateUser(User user) {}
+```
+
+
+
+
+
+### 缓存的工作原理
+
+当没有引入其他的缓存组件springboot启用SimpleCacheConfiguration配置类，并给容器注册一个CacheManger: ConcurrentMapManger
+
+ConcurrentMapManger可以获取和创建ConcurrentMapCache类型的缓存组件，并将缓存数据保存到ConcurrentMap中。
+
+##### 运行流程
+
+@Cacheable 标注的方法执行之前先检查缓存中有没有数据，默认按照参数的是值当作key来进行查找，如果没有数据就执行方法，并将数据放入缓存
+
+1. 方法运行之前,先去查询Cache,按照cacheNames指定的名字获取，第一次获取缓存如果没有cache可以将缓存对象创建出来。
+
+2. 去Cache中查找缓存内容，默认使用的key是方法的参数，key是按照某种策略生成的，默认使用SimpleKeyGrenerator生成key。
+
+   SimpleKeyGrenerator生成key的默认策略
+
+   1. 如果没有参数 key = new SimpleKey();
+   2. 如果有一个参数 key = 参数值;
+   3. 如果有多个参数 key = new SimpleKey(params);
+
+3. 没有查到缓存就调用目标方法。
+
+4. 将目标方法返回的结果，放进缓存中。
+
+   
+
+##### 自定义KeyGenerator
+
+```java
+/**
+ * @author maxu
+ */
+@Configuration
+public class MyCacheConfig {
+
+	@Bean("myKeyGenerator")
+	public KeyGenerator keyGenerator() {
+		return new KeyGenerator() {
+			@Override
+			public Object generate(Object o, Method method, Object... params) {
+				return method.getName() + "[" + Arrays.asList(params).toString() + "]";
+			}
+		};
+	}
+}
+```
+
+
+
+### 热部署
+
+引入依赖，在idea中当我们修改了java文件按快捷键Ctrl + F9 便可以实现热部署
+
+```xml
+<dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-devtools</artifactId>
+         <optional>true</optional>
+</dependency>
+```
+
 
 
 ### Springboot 的异常处理
@@ -311,4 +444,6 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 }
 ```
+
+### SpringCloud
 
