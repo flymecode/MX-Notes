@@ -1,4 +1,4 @@
-### Springboot 2.0
+### SpringBoot 2.0
 
 #### 数据源配置
 
@@ -222,8 +222,6 @@ public String updateUser(User user) {...}
 
 
 
-
-
 ### 缓存的工作原理
 
 当没有引入其他的缓存组件springboot启用SimpleCacheConfiguration配置类，并给容器注册一个CacheManger: ConcurrentMapManger
@@ -271,7 +269,146 @@ public class MyCacheConfig {
 }
 ```
 
+### 整合Redis
 
+​	[redis命令中心](http://www.redis.cn/commands.html#string)
+
+引入redis的starter
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-redis</artifactId>
+    <version>1.4.7.RELEASE</version>
+</dependency>
+```
+
+配置application.properties
+
+```xml
+spring.redis.host= ip地址
+```
+
+```java
+@Autowired
+// k-v 都是String
+StringRedisTemplate redisTemplate;
+// k-v 都是对象
+@Autowired
+RedisTemplate redisTemplate;
+```
+
+默认如果保存对象，使用jdk序列化机制，序列化后的数据保存到redis中。
+
+但是一般我们将对象的json形式保存到redis中。
+
+所以有两种方式，一种是提前将对象转化为json然后保存到redis中，第二种是我们指定序列化器。
+
+我们现在采用第二种形式,当我们使用的时候直接注入就可以,并配置CacheManger
+
+依赖
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
+</dependency>
+```
+
+springboot2.0的redis整合包多出**lettuce**连接池，需要**commons-pool2**，所以项目pom依赖要添加commons-pool2
+
+```xml
+<!-- 高版本redis的lettuce需要commons-pool2 -->
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-pool2</artifactId>
+    <version>2.6.0</version>
+</dependency>
+```
+
+### 配置类
+
+```java
+@Configuration
+public class RedisConfig extends CachingConfigurerSupport {
+
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
+
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+
+        RedisSerializer<String> redisSerializer = new StringRedisSerializer();
+
+        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+        ObjectMapper om = new ObjectMapper();
+        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+        jackson2JsonRedisSerializer.setObjectMapper(om);
+
+        template.setConnectionFactory(factory);
+        //key序列化方式
+        template.setKeySerializer(redisSerializer);
+        //value序列化
+        template.setValueSerializer(jackson2JsonRedisSerializer);
+        //value hashmap序列化
+        template.setHashValueSerializer(jackson2JsonRedisSerializer);
+
+        return template;
+    }
+
+    @Bean
+    public CacheManager cacheManager(RedisConnectionFactory factory) {
+        RedisSerializer<String> redisSerializer = new StringRedisSerializer();
+        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+
+        //解决查询缓存转换异常的问题
+        ObjectMapper om = new ObjectMapper();
+        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+        jackson2JsonRedisSerializer.setObjectMapper(om);
+
+        // 配置序列化（解决乱码的问题）,过期时间30秒
+        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofSeconds(30))
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer))
+                .disableCachingNullValues();
+
+        RedisCacheManager cacheManager = RedisCacheManager.builder(factory)
+                .cacheDefaults(config)
+                .build();
+        return cacheManager;
+    }
+}
+```
+
+### yml配置
+
+```yml
+spring:
+  redis:
+    database: 0
+    host: 127.0.0.1
+    jedis:
+      pool:
+        #最大连接数据库连接数,设 0 为没有限制
+        max-active: 8
+        #最大等待连接中的数量,设 0 为没有限制
+        max-idle: 8
+        #最大建立连接等待时间。如果超过此时间将接到异常。设为-1表示无限制。
+        max-wait: -1ms
+        #最小等待连接中的数量,设 0 为没有限制
+        min-idle: 0
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1ms
+        min-idle: 0
+      shutdown-timeout: 100ms
+    password: ''
+    port: 6379
+```
 
 ### 热部署
 
@@ -406,8 +543,6 @@ public class ScheduleService {
 
 
 
-
-
 ### Security
 
 ```java
@@ -447,3 +582,171 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
 
 ### SpringCloud
 
+### 注册中心
+
+依赖
+
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-netflix-eureka-server</artifactId>
+    <version>2.1.0.RELEASE</version>
+    <scope>compile</scope>
+</dependency>
+```
+
+##### 启动 添加@EnableEurekaServer注解
+
+```java
+@EnableEurekaServer
+@SpringBootApplication
+public class EurekaApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(EurekaApplication.class, args);
+	}
+}
+```
+
+##### yml配置
+
+```yml
+server:
+  port: 8761
+eureka:
+  instance:
+    hostname: eureka-server #注册中心名称
+  client:
+    register-with-eureka: false  # 不将自己注册到eureka
+    fetch-registry: false # 不从eureka中获取服务的注册信息
+    service-url:
+      defaultZone: http://localhost:8761/eureka/ # 注册中心地址
+  server:
+    enable-self-preservation: false #在开发环境中关闭，在生产环境不能关闭
+
+```
+
+### 服务者
+
+##### yml配置
+
+```yml
+server:
+  port: 8001
+eureka:
+  instance:
+    prefer-ip-address: true # 注册服务的时候使用ip地址
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+spring:
+  application:
+    name: pro-user #服务者名称
+```
+
+##### controller
+
+```java
+/**
+ * @author maxu
+ */
+@RestController
+public class TicketController {
+	@Autowired
+	private TickService tickService;
+    
+	@GetMapping("/tick")
+	public String getTicket() {
+		return tickService.getTicket();
+	}
+}
+```
+
+##### service
+
+```java
+/**
+ * @author maxu
+ */
+@Service
+public class TicketService {
+	public String getTicket() {
+		return "流浪地球";
+	}
+}
+```
+
+##### 启动
+
+```java
+@EnableEurekaClient // 将服务注册到eureka
+@SpringBootApplication
+public class ProApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(ProApplication.class, args);
+	}
+
+}
+```
+
+### 消费者
+
+##### yml配置
+
+```yml
+server:
+  port: 8200
+eureka:
+  instance:
+    prefer-ip-address: true  # 注册服务的时候使用ip地址
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+spring:
+  application:
+    name: consumer-user #消费者名称
+```
+
+##### controller
+
+```java
+/**
+ * @author maxu
+ */
+@RestController
+public class UserController {
+	@Resource
+	private RestTemplate restTemplate;
+
+	@GetMapping("/buy")
+	public String buyTicket(String name) {
+        // 如果没有使用负载均衡机制，不能使用服务名称来代替服务地址
+		String s = restTemplate.getForObject("http://PRO-USER/tick", String.class);
+		return name + s;
+	}
+}
+```
+
+##### 启动
+
+```java
+@EnableDiscoveryClient // 向服务中心注册服务，并发现服务
+@SpringBootApplication
+public class ConsumerApplication {
+
+   public static void main(String[] args) {
+      SpringApplication.run(ConsumerApplication.class, args);
+   }
+   @LoadBalanced // 使用负载均衡机制，默认是采用轮询的方式
+   @Bean
+   public RestTemplate restTemplate() {
+      return new RestTemplate();
+   }
+}
+```
+
+##### 实现eureka高可用
+
+eureka是客户端发现，简单直接。
+
+eureka之间实现两两相互注册
