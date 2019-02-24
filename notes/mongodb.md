@@ -39,7 +39,7 @@ MongoDB 的逻辑结构是一种层次结构。主要由：
 （4）一个 MongoDB 实例支持多个数据库（database）。
 文档(document)、集合(collection)、数据库(database)的层次结构如下图:
 
-![1550714769950](C:\Users\maxu1\Desktop\MX-Notes\notes\1550714769950.png)
+![1550714769950](https://github.com/flymecode/MX-Notes/blob/master/image/1550714769950.png)
 
 
 
