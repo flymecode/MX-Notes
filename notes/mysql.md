@@ -1,6 +1,6 @@
 如何设计一个关系型数据库？
 
-![1550129557975](C:\Users\maxu1\Desktop\MX-Notes\notes\1550129557975.png)
+![1550129557975](https://github.com/flymecode/MX-Notes/blob/master/image/1550129557975.png)
 
 ## 索引模块
 
@@ -24,7 +24,7 @@ B+Tree的铲鲟效率更加稳定
 
 B+Tree更有利于对数据库的扫描
 
-![1550130972854](C:\Users\maxu1\Desktop\MX-Notes\notes\1550130972854.png)
+![1550130972854](https://github.com/flymecode/MX-Notes/blob/master/image/1550130972854.png)
 
 ##### 密集索引和稀疏索引的区别？
 
@@ -38,7 +38,7 @@ InnoDB有且仅有一个密集索引
 
 
 
-![1550137599967](C:\Users\maxu1\Desktop\MX-Notes\notes\1550137599967.png)
+![1550137599967](https://github.com/flymecode/MX-Notes/blob/master/image/1550137599967.png)
 
 非主键索引存储相关键位和其对应的主键值，包含两次查找
 
@@ -49,9 +49,9 @@ InnoDB有且仅有一个密集索引
 show variables like '%query%'
 show status like '%slow_queries%'
 
-![1550139826980](C:\Users\maxu1\Desktop\MX-Notes\notes\1550139826980.png)
+![1550139826980](https://github.com/flymecode/MX-Notes/blob/master/image/1550139826980.png)
 
-![1550139854091](C:\Users\maxu1\Desktop\MX-Notes\notes\1550139854091.png)
+![1550139854091](https://github.com/flymecode/MX-Notes/blob/master/image/1550139854091.png)
 
 打开慢查询
 
@@ -69,7 +69,7 @@ set global long_query_time = 1;
 
 
 
-![1550139799373](C:\Users\maxu1\Desktop\MX-Notes\notes\1550139799373.png)
+![1550139799373](https://github.com/flymecode/MX-Notes/blob/master/image/1550139799373.png)
 
 
 
@@ -77,7 +77,7 @@ set global long_query_time = 1;
 
 
 
-![1550143900092](C:\Users\maxu1\Desktop\MX-Notes\notes\1550143900092.png)
+![1550143900092](https://github.com/flymecode/MX-Notes/blob/master/image/1550143900092.png)
 
 mysql创建复合索引首先对sql最左边的索引字段进行排序，在排序的基础上再对第二个索引的字段进行排序。
 
@@ -103,14 +103,14 @@ select @@ tx_isolation
 
 set session transaction isolation level read uncommitted
 
-![1550218906156](C:\Users\maxu1\Desktop\MX-Notes\notes\1550218906156.png)
+![1550218906156](https://github.com/flymecode/MX-Notes/blob/master/image/1550218906156.png)
 
-![1550221752136](C:\Users\maxu1\Desktop\MX-Notes\notes\1550221752136.png)
+![1550221752136](https://github.com/flymecode/MX-Notes/blob/master/image/1550221752136.png)
 
-![1550223134805](C:\Users\maxu1\Desktop\MX-Notes\notes\1550223134805.png)
+![1550223134805](https://github.com/flymecode/MX-Notes/blob/master/image/1550223134805.png)
 
-![1550223906919](C:\Users\maxu1\Desktop\MX-Notes\notes\1550223906919.png)
+![1550223906919](https://github.com/flymecode/MX-Notes/blob/master/image/1550223906919.png)
 
-![1550224011169](C:\Users\maxu1\Desktop\MX-Notes\notes\1550224011169.png)
+![1550224011169](https://github.com/flymecode/MX-Notes/blob/master/image/1550224011169.png)
 
-![1550224407677](C:\Users\maxu1\Desktop\MX-Notes\notes\1550224407677.png)
+![1550224407677](https://github.com/flymecode/MX-Notes/blob/master/image/1550224407677.png)
