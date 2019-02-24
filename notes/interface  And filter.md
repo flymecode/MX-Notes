@@ -12,7 +12,7 @@
 
 - 总结：过滤器包裹住servlet，servlet包裹住拦截器。
 
-  ![1550999541272](C:\Users\maxu1\Desktop\1550999541272.png)
+  ![1550999541272](https://github.com/flymecode/MX-Notes/blob/master/image/1550999541272.png)
 
 过滤器的触发时机是容器后，servlet之前，所以过滤器的
 
@@ -59,4 +59,4 @@ public void afterCompletion(HttpServletRequest request, HttpServletResponse resp
 }
 ```
 
-![1551001190293](C:\Users\maxu1\Desktop\1551001190293.png)
+![1551001190293](https://github.com/flymecode/MX-Notes/blob/master/image/1551001190293.png)
