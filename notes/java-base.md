@@ -2,7 +2,7 @@
 
 [TOC]
 
-
+![overview](C:\Users\maxu1\Desktop\MX-Notes\notes\overview.png)
 
 ### 枚举  
 
@@ -179,4 +179,88 @@ public enum Color implements Behaviour{
 当变量的编译时类型和运行时类型不同时，通过该变量访问它引用的对象的势力变量的时，该实例变量的值由声明改变量的类型决定的。但通过该变量调用它引用的对象的实例方法时，该方法行为将由他实际引用的对象来决定。
 
 ![1549014708591](https://github.com/flymecode/MX-Notes/blob/master/image/1549014708591.png)
+
+### 抽象类
+
+- 如果自下而上在类的继承层次结构中，位于上层的类更具有通用性，甚至可能更加抽象。
+- 祖先类更加通用，人们只是将它作为其它类的基类，而不是作为想使用特定的实例类。
+- 用关键字abstract可以标识一个抽象类：除了抽象方法以外，抽象类可以包含具体的数据和具体的方法。
+- 抽象方法是没有方法体的。
+- 抽象类不能够被实例化。如果将一个类声明为abstract，就不能创建这个类的对象。
+- 我们可以定义一个抽象类的对象变量，但是它只能引用非抽象子类的对象。
+
+
+
+### 多态
+
+- 一个对象变量，可以指示多种实际的类型的现象被称为多态，在运行的时候，能够自动的选择调用哪个方法的现象被称为动态绑定。
+- 如果不想让一个方法具有虚拟特征可以将方法设置为final
+- 不能将一个父类的引用赋值给子类的变量。
+- 在Java中，子类的数组可以转化为父类的数组的引用，而不用采用强制类型转换。
+
+### fianl类和方法
+
+- 不允许扩展的类被称为final类。
+- 被final修饰的方法不能覆盖这个方法
+- 域也可以被声明为 final。对于 final 域来说，构造对象之后就不允许改变它们的值了。不过， 如果将一个类声明为 final， 只有其中的方法自动地成为 final,而不包括域
+
+### equals方法与 hashCode方法
+
+##### equals:
+
+- 用于检测一个对象是否等于另一个对象。
+- 在Object类中，这个方法判断对象是否具有相同的引用，如果这两个对象具有相同的
+- 引用就代表这两个对象是相等的。
+- 为了防备两属性可能为null的情况，我们需要使用Object.equals方法：如果两个参数都是null,Objdect.equals(a,b)将返回true，如果其中一个参数为null则，则返回false，如果两个参数都不为null，调用a.equals(b)
+
+特性：
+
+- 自反性
+- 对称性
+- 传递性
+- 一致性
+- 对任意非空引用x, x.equals(null),都返回false
+
+```java
+if(this == other)
+    return true;  // 检测是否是引用同一个对象
+if(other == null)
+    return fasle; // 检测other是否为null
+if(getClass() != other.getClass()) 
+    return false;
+if(!(other instaceof ClassName))
+    return fasle; // 将othre转换为相应的类类型变量
+ClassName other = (ClassName) othreName;
+
+// 开始比较域，使用 == 比较基本类型域，使用equal比较对象域
+// 如果所有的都匹配返回true,否则返回false
+```
+
+
+
+##### HashCode:
+
+```java
+String s = "ok";
+StringBuilder sb = new StringBuilder(s);
+System.out.println(s.hashCode()+ " " + sb.hashCode());
+String t = new String("ok");
+StringBuilder tb = new StringBuilder(t);
+System.out.println(t.hashCode() + " " + tb.hashCode());
+```
+
+
+
+| 对象 | hasCode    |
+| ---- | ---------- |
+| s    | 3548       |
+| sb   | 460141958  |
+| t    | 3548       |
+| tb   | 1163157884 |
+
+字符串 s 和 t 拥有相同的散列码，是因为字符串的散列码是由内容导出的，而字符串缓冲sb与tb却有着不同的散列码，这是因为在StringBuilder类中没有定义hashCode方法，它的散列码是由Object类的默认hashCode方法导出的对象存储地址。
+
+如果重新定义了equals方法，就必须重新定义hashCode方法，以便用户可以将对象方便的插入到散列列表中，hashCode应该返回一个整形数值，并合理地组合实例域的散列码，以便用户能够让各个不同的对象产生散列码更加均匀。
+
+equals与hashCode的定义必须一致，如果x.equals(y),那么x.hashCode()就必须与y.hashCode()具有相同的值。比如，如果用定义的Employee.equals比较雇员的ID，那么hashCode方法就需要散列ID,而不是雇员的姓名或者存储地址。
 
