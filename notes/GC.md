@@ -79,7 +79,7 @@ public static  void main(String[] args) {
 - 适用于对象村活低的场景
 - 适用年轻代的收集
 
-![1551589760984](C:\Users\maxu1\Desktop\MX-Notes\notes\1551589760984.png)
+![1551589760984](https://github.com/flymecode/MX-Notes/blob/master/image/1551589760984.png)
 
  标记-整理算法（Compacting）
 
@@ -92,7 +92,7 @@ public static  void main(String[] args) {
 - 不用设置两块内存互换
 - 适用于存活率高的场景
 
-![1551589483095](C:\Users\maxu1\Desktop\MX-Notes\notes\1551589483095.png)
+![1551589483095](https://github.com/flymecode/MX-Notes/blob/master/image/1551589483095.png)
 
 分代收集算法（Generational Collector）
 
@@ -100,7 +100,7 @@ public static  void main(String[] args) {
 - 按照对象生命周期的不同划分区域以采用不同的垃圾回收算法
 - 目的：提高JVM的回收率
 
-![1551590019486](C:\Users\maxu1\Desktop\MX-Notes\notes\1551590019486.png)
+![1551590019486](https://github.com/flymecode/MX-Notes/blob/master/image/1551590019486.png)
 
 
 
@@ -121,7 +121,7 @@ Eden区
 
 两个Survivor区
 
-![1551590595600](C:\Users\maxu1\Desktop\MX-Notes\notes\1551590595600.png)
+![1551590595600](https://github.com/flymecode/MX-Notes/blob/master/image/1551590595600.png)
 
 经历一次Minor次数依然存活的对象
 
@@ -172,14 +172,14 @@ Survivor区中存放不下的对象
 - 单线程收集，进行垃圾收集时，必须暂停所有的工作线程。
 - 简单高效，Client模式下默认的年轻代收集器。
 
-![1551593597605](C:\Users\maxu1\Desktop\MX-Notes\notes\1551593597605.png)
+![1551593597605](https://github.com/flymecode/MX-Notes/blob/master/image/1551593597605.png)
 
 ParNew收集器（-XX:+UseParNewGC,复制算法）
 
 - 多线程收集，其余行为，特点和Serial收集器一样
 - 单核执行效率不如Serial，在多核下执行才有优势
 
-![1551593919763](C:\Users\maxu1\Desktop\MX-Notes\notes\1551593919763.png)
+![1551593919763](https://github.com/flymecode/MX-Notes/blob/master/image/1551593919763.png)
 
 ##### Parallel Scavenge收集器（-XX：+UseParallelGC，复制算法）
 
@@ -195,13 +195,13 @@ Serial Old收集器（-XX：+UseSerialOldGC,标记-整理算法）
 - 单线程收集，进行垃圾收集时，必须暂停所有工作线程
 - 简单高效，Client模式下默认的老年代收集器
 
-![1551598747027](C:\Users\maxu1\Desktop\MX-Notes\notes\1551598747027.png)
+![1551598747027](https://github.com/flymecode/MX-Notes/blob/master/image/1551598747027.png)
 
 Parallel Old收集器（-XX:+UseParallelOldGC 标记-整理算法）
 
 - 多线程，吞吐量
 
-![1551598843583](C:\Users\maxu1\Desktop\MX-Notes\notes\1551598843583.png)
+![1551598843583](https://github.com/flymecode/MX-Notes/blob/master/image/1551598843583.png)
 
 ##### CMS收集器（-XX:+UseConcMarkSweepGC，标记-清除算法）
 
