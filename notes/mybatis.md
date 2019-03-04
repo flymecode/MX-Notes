@@ -220,3 +220,8 @@ SqlSessionTemplate对象可以使用SqlSessionFactory作为构造方法的参数
     </insert>
 ```
 
+##### MyBatis中当实体类中属性和表的字段名不一样怎样处理？
+
+- ​    在写sql语句的时候起别名
+- ​    在配置文件开启驼峰命名规则，必须符合规则。
+- ​    使用resultMap
