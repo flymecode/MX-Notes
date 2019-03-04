@@ -59,7 +59,7 @@ public static  void main(String[] args) {
 
 清除：对堆内存从头到尾进行线性的遍历，回收不可达的对象内存
 
-![1551588132324](C:\Users\maxu1\Desktop\MX-Notes\notes\1551588132324.png)
+![1551588132324](https://github.com/flymecode/MX-Notes/blob/master/image/1551588132324.png)
 
 缺点：
 
