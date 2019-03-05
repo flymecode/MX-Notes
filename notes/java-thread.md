@@ -258,6 +258,8 @@ public static void main(String[] args) {
 
 在Java中线程的状态一共被分成6种：
 
+![1551749425572](C:\Users\maxu1\Desktop\MX-Notes\notes\1551749425572.png)
+
 #### 初始态：NEW
 
 创建一个Thread对象，但还未调用start()启动线程时，线程处于初始态。
@@ -326,6 +328,10 @@ Exception in thread "main" java.lang.IllegalThreadStateException
 ##### 作用：能够保证在同一时刻最多只有一个线程执行该段代码，以达到并发安全的效果。
 
 ##### 介绍：JVM可以通过monitor来加锁和解锁，保证同时只有一个线程可以执行代码，从而保证了线程安全，同时具有可重入和不可中断的性质。
+
+##### 可见性：必须确保在锁释放之前，对共享变量所做的修改，对随后获得该锁的另一个线程是可见的（即在获得锁时应获得最新共享变量的值），否则另一个线程可能对本地保存的缓存数据的副本上进行操作，从而引起不一致的现象
+
+###### synchronized锁的不是代码，锁的都是对象
 
 ### Synchronized的两个作用
 
@@ -449,11 +455,6 @@ class xxx {
 - 同时访问静态synchronized和非静态synchronized方法
 - 方法抛出异常后，会释放锁
 
-##### 字节码：
-
-- monditorenter
-- monditorexit
-
 ##### 可重入原理：
 
 - 加锁次数计数器
@@ -479,7 +480,167 @@ class xxx {
   - 每个锁有单一的条件（某个对象）
 - 无法知道是否成功获取锁
 
+实现Synchronized的基础
 
+- Java对象头
+
+  | 虚拟机位数 | 头对象结构             | 说明                                                         |
+  | ---------- | ---------------------- | ------------------------------------------------------------ |
+  | 32\64      | Mark Word              | 默认存储对象的hashCode,分代年龄，锁类型，锁标识位等信息      |
+  | 32\64      | Class Metadata Address | 类型指针指向对象的类元数据，JVM通过这个指针确定该对象是哪个类的数据 |
+
+- Monitor ：每个Java对象天生具有一个锁
+
+```c++
+ObjectMonitor::ObjectMonitor() {
+  _header       = NULL;
+  _count        = 0; // 计数器
+  _waiters      = 0,
+  _recursions   = 0;
+  _object       = NULL;
+  _owner        = NULL; // 保存获得锁的线程
+  _WaitSet      = NULL; // 等待队列
+  _WaitSetLock  = 0 ;
+  _Responsible  = NULL ;
+  _succ         = NULL ;
+  _cxq          = NULL ;
+  FreeNext      = NULL ;
+  _EntryList    = NULL ; // 锁池
+  _SpinFreq     = 0 ;
+  _SpinClock    = 0 ;
+  OwnerIsThread = 0 ;
+}
+```
+
+##### 字节码：
+
+```java
+public void syncsTask() {
+    synchronized (this) {
+        System.out.println("hello");
+    }
+}
+
+public synchronized void syncTask() {
+    System.out.println("hello again");
+}
+```
+
+```java
+public void syncsTask();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=2, locals=3, args_size=1
+         0: aload_0
+         1: dup
+         2: astore_1
+         3: monitorenter // 当执行到这里的时候当前线程尝试获取对象锁
+         4: getstatic     #2                  // Field java/lang/System.out:Ljava/io/PrintStream;
+         7: ldc           #3                  // String hello
+         9: invokevirtual #4                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        12: aload_1
+        13: monitorexit // 释放锁
+        14: goto          22
+        17: astore_2
+        18: aload_1
+        19: monitorexit
+        20: aload_2
+        21: athrow
+        22: return
+            
+public synchronized void syncTask();
+    descriptor: ()V
+    flags: ACC_PUBLIC, ACC_SYNCHRONIZED  // 这个标志代表该方法已经加锁
+    Code:
+      stack=2, locals=1, args_size=1
+         0: getstatic     #2                  // Field java/lang/System.out:Ljava/io/PrintStream;
+         3: ldc           #5                  // String hello again
+         5: invokevirtual #4                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+         8: return
+      LineNumberTable:
+        line 12: 0
+        line 13: 8
+
+```
+
+### 自旋锁
+
+- 许多情况下，共享数据的锁定状体持续时间较短，切换线程不值得
+- 通过让线程执行忙循环等待锁的释放，不让出CPU
+- 缺点：当锁占用的时间比较长的时候，会带来性能上的开销
+
+### 自适应自旋锁
+
+- 自旋的次数不再固定
+- 由前一次在同一个锁上的自旋时间及锁的拥有者状态来决定的
+
+### 锁消除
+
+- `JIT`编译时，对运行上下文进行扫描，去除不可能存在竞争的锁。
+
+  ```java
+  public void add(String str1,String str2) {
+      // StringBuffer是线程安全的，由于sb,只会在append方法中使用，不可能被其他线程引用
+     	// 因此sb属于不可能共享的资源，JVM会自动消除内部的锁
+      StringBuffer sb = new StringBuffer();
+      sb.append(str1).append(str2);
+  }
+  ```
+
+### 锁粗化
+
+- 通过扩大加锁的范围，避免反复加锁和解锁
+
+```java
+public void add(String str1) {
+    int i = 0;
+    StringBuffer sb = new StringBuffer();
+    while(i++ < 100)
+        // 这种多次加锁，导致性能问题，所以JVM扩大加锁范围到方法的外部，只需要加一次锁就可以了。
+    	sb.append(str1);
+}
+```
+
+synchronized的四种状态：
+
+- 无锁，偏向锁，轻量级锁，重量级锁
+
+偏向锁：
+
+- 大多数情况下，锁不存多线程的竞争，总是由同一线程获得
+
+  核心思想：如果一个线程获得了锁，那么锁就进入偏向模式，此时Mark Word的结构也变为偏向锁结构，当该线程再次请求锁时，无需再做任何的操作，即获取锁的过程只需要检查Mark Word的锁标记位为偏向锁，以及当前线程id等于Mark Word 的ThreadID即可，这样就省去了大量有关锁申请的操作。
+
+轻量级锁：
+
+- 轻量级锁是由偏向锁升级而来的，偏向锁运行在一个线程进入同步块的情况下，当第二个线程加入锁争用的时候，偏向锁就会升级成为轻量级的锁。
+- 适用场景：线程交替
+- 若存在同一时间访问同一锁的情况下，就会导致轻量级锁膨胀为重量级锁。
+
+锁的内存语义：
+
+- 当线程释放锁的时候，Java内存模型会把该线程对应的本地内存中的共享变量刷新到主内存中；
+- 而当线程获取锁的时候，Java内存模型会将该线程本地内存置为无效，从而使得被监视器保护的临界资源必须从主内存中读取共享变量
+
+![1551778205860](C:\Users\maxu1\Desktop\MX-Notes\notes\1551778205860.png)
+
+ReentrantLock公平性的设置
+
+```java
+ReentrantLock lock = new ReentrantLock();
+```
+
+参数为true的时候，倾向于将锁赋予等待时间最久的线程。
+
+synchronized和ReentrantLock的区别？
+
+- synchronized是非公平锁
+- ReentrantLock是类，sybchronized是关键字
+- ReentrantLock可是对获取锁的等待时间进行设置，可以避免死锁
+- ReentrantLock可以获取锁的信息
+- ReentrantLock可以灵活的实现多路通知
+- 实现的机制是不一样的，ReentrantLock是调用Unsafe类的park（）方法，synchronized是操作对象头上的Mark Word
 
 ### 线程调试技巧
 
