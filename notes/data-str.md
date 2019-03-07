@@ -1654,33 +1654,196 @@ PriorityQueue<Integer> pq = new PriorityQueue<>(
 
 线段树是平衡二叉树
 
-线段树不是完全二叉树
+线段树不一定是完全二叉树，也不一定是满二叉树
 
 对一颗树来说，最大的深度和最小的深度最大差距为1
 
+![1551841744513](C:\Users\maxu1\Desktop\MX-Notes\notes\1551841744513.png)
+
+
+
+![1551842995697](C:\Users\maxu1\Desktop\MX-Notes\notes\1551842995697.png)
+
 ```java
-public class SegmentTree<E> {
-    private E[] data;
-    private E[] tree;
-    public SegmentTree(E[] arr) {
-        data = new Object[arr.length];
-        tree = (E[]) new Object[4 * arr.length];
-    }
-    for(int i = 0; i < arr.length;i++) {
-        data[i] = arr[i];
-    }
-    public int getSize() {
-        return data.length;
-    }
-    public E get(int index){
-        return data[index];
-    }
-    private int leftChild(int index) {
-        return 2 * index + 1;
-    }
-    private int rightChild(int index) {
-        return 2 * index + 2;
-    }
+public interface Meger<E> {
+    E merger(E a, E b);
 }
+public class SegmentTree<E>{
+	private E[] data;
+	private E[] tree;
+	private Meger merger;
+
+	public SegmentTree(E[] arr, Meger<E> merger) {
+		this.merger = merger;
+		data = (E[]) new Object[arr.length];
+		for (int i = 0; i < arr.length; i++){
+			data[i] = arr[i];
+		}
+		// 为线段树创建4n的空间
+		tree = (E[]) new Object[4 * arr.length];
+		buildSegmentTree(0, 0, data.length - 1);
+	}
+
+	private void buildSegmentTree(int treeIndex, int l, int r) {
+		if (l == r) {
+			tree[treeIndex] = data[l];
+			return;
+		}
+		int leftTreeIndex = leftChild(treeIndex);
+		int rightTreeIndex = rightChild(treeIndex);
+		// 防止溢出
+		int mid = l + (r - l) / 2;
+		buildSegmentTree(leftTreeIndex, l, mid);
+		buildSegmentTree(rightTreeIndex, mid + 1, r);
+		//对节点进行业务的操作，具体实现需要传递一个
+		tree[treeIndex] = (E) merger.merger(tree[leftTreeIndex], tree[rightTreeIndex]);
+	}
+
+	public int getSize() {
+		return data.length;
+	}
+
+	public E get(int index) {
+		return data[index];
+	}
+    
+    public void set(int index, E e) {
+        data[index] = e;
+        set(0, 0, data.length - 1, index, e);
+    }
+    
+    private void set(int treeIndex, int l, int r, int index, E e) {
+        if(l == r) {
+            tree[treeIndex] = e;
+            return;
+        }
+        int mid = l + (r - l) / 2;
+        int leftTreeIndex = leftChild(treeIndex);
+        int rightTreeIndex = rightChild(treeIndex);
+        if(index >= mid + 1) {
+            set(rigTreeIndex, mid + 1, r,index, e);
+        } else {
+            set(leftTreeIndex, l, mid, index, e);
+        }
+        tree[treeIndex] = (E)merger.merger(tree[leftTreeIndex],tree[rightTreeIndex]);
+    }
+
+	// 返回完全二叉树的数组表示中，一个索引表示元素的左孩子节点的索引
+	private int leftChild(int index) {
+		return 2 * index + 1;
+	}
+
+	// 返回完全二叉树的数组表示中，一个索引表示元素的右孩子节点的索引
+	private int rightChild(int index) {
+		return 2 * index + 2;
+	}
+
+	// 查询[l,r]
+	public E query(int ql, int qr) {
+		if (ql > qr || ql < 0 || qr < 0 || qr > data.length || ql > data.length) {
+			throw new IllegalArgumentException("index is error");
+		}
+		return query(0, 0, data.length - 1, ql, qr);
+	}
+
+	//  从[l,r]中查找[ql,qr]
+	private E query(int treeIndex, int l, int r, int ql, int qr) {
+		if (l == ql && r == qr) {
+			return tree[treeIndex];
+		}
+		int mid = l + (r - l) / 2;
+		int leftTreeIndex = leftChild(treeIndex);
+		int rightTreeIndex = rightChild(treeIndex);
+		if (ql >= mid + 1) {
+			return query(rightTreeIndex, mid + 1, r, ql, qr);
+		} else if (qr <= mid) {
+			return query(leftTreeIndex, l, mid, ql, qr);
+		}
+
+		E leftResult = query(leftTreeIndex, l, mid, ql, mid);
+		E rightResult = query(rightTreeIndex, mid + 1, r, mid + 1, qr);
+		// 融合结果
+		return (E) merger.merger(leftResult, rightResult);
+	}
+}
+```
+
+### Trie
+
+![1551925152006](C:\Users\maxu1\Desktop\MX-Notes\notes\1551925152006.png)
+
+```java
+public class Trie {
+    private class Node {
+        // 判断是否是一个单词，我们不能只依靠叶子节点来判断是否结束
+        boolean isWord;
+        // 边与节点的映射
+        Map<Character, Node> next;
+        public Node(boolean isWord) {
+            this.isWord = isWord;
+            next = new TreeMap<>();
+        }
+
+        public Node() {
+            this(false);
+        }
+    }
+    private Node root;
+    private int size;
+
+    public Trie() {
+        root = new Node();
+        size = 0;
+    }
+
+    // 获取单词数量
+    public int getSize() {
+        return size;
+    }
+
+    // 向Trie中添加新的单词word
+    public void add(String word) {
+        Node cur = root;
+        for (int i = 0; i < word.length(); i++) {
+            char c = word.charAt(i);
+            if (cur.next.get(c) == null) {
+                cur.next.put(c, new Node());
+            }
+            cur = cur.next.get(c);
+        }
+
+        if (!cur.isWord) {
+            cur.isWord = true;
+            size++;
+        }
+    }
+
+    public boolean constains(String word) {
+        Node cur = root;
+        for (int i = 0; i < word.length(); i++) {
+            char c = word.charAt(i);
+            if (cur.next.get(c) == null) {
+                return false;
+            }
+            cur = cur.next.get(c);
+        }
+        // 返回这个单词是否包含
+        return cur.isWord;
+    }
+    // 查询是否存在Trie中有单词以prefix为前缀
+
+    public boolean isPrefix(String prefix) {
+        Node cur = root;
+        for (int i = 0; i < prefix.length(); i++) {
+            char c = prefix.charAt(i);
+            if (cur.next.get(c) == null) {
+                return false;
+            }
+            cur = cur.next.get(c);
+        }
+        return true;
+    } 
+}
+
 ```
 
