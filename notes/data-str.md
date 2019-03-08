@@ -1847,3 +1847,46 @@ public class Trie {
 
 ```
 
+### UnionFind
+
+```java
+public interface UF {
+    boolean isConnected(int p, int q);
+    void union(int p, int q);
+    int getSize();
+}
+
+public class UnionFind implements UF {
+    private int[] id;
+    public UnionFind(int size) {
+        id = new int[size];
+        for(int i = 0; i < id.length; i ++)
+            id[i] = i;
+    }
+    boolean isConnected(int p, int q){
+       return find(p) == find(q);
+    }
+    private int find(int p) {
+        if(p < 0 && p >= id.length) {
+            throw new IllegalArgumentException("p is out of bound.");
+        }
+        return id[p];
+    }
+    void union(int p, int q) {
+        int p = find(p);
+        int q = find(q);
+        if(p == q) {
+            return;
+        }
+        for(int i = 0; i < id.length; i++) {
+            if(id[i] == p){
+                id[i] == q;
+            }
+        }
+    }
+    int getSize(){
+         return id.length;
+    }
+}
+```
+
