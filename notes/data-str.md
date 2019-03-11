@@ -1768,7 +1768,7 @@ public class SegmentTree<E>{
 }
 ```
 
-### Trie
+## Trie
 
 ![1551925152006](C:\Users\maxu1\Desktop\MX-Notes\notes\1551925152006.png)
 
@@ -1847,7 +1847,7 @@ public class Trie {
 
 ```
 
-### UnionFind
+## UnionFind
 
 ```java
 public interface UF {
@@ -1855,7 +1855,11 @@ public interface UF {
     void union(int p, int q);
     int getSize();
 }
+```
 
+
+
+```java
 public class UnionFind implements UF {
     private int[] id;
     public UnionFind(int size) {
@@ -1890,3 +1894,529 @@ public class UnionFind implements UF {
 }
 ```
 
+![1552265493600](C:\Users\maxu1\Desktop\MX-Notes\notes\1552265493600.png)
+
+```java
+// 将每个节点看做一个节点
+public class QuickFind {
+    private int[] parent;
+    // 保存根节点下总共有多少子节点
+    private int[] sz;
+    public UnionFind(int size) {
+        parent = new int[size];
+        sz = int[size];
+        for (int i = 0; i < size; i++) {
+            parent[i] = i;
+            sz[i] = 1;
+        }
+    }
+
+    public int getSize() {
+        return parent.length;
+    }
+
+    public int find(int p) {
+        while (p != parent[p]) {
+            p = parent[p];
+        }
+        return p;
+    }
+
+    boolean isConnected(int p, int q){
+        return find(p) == find(q);
+    }
+
+    void union(int p, int q) {
+        int pRoot = find(p);
+        int qRoot = find(q);
+        if(pRoot == qRoot) {
+            return;
+        }
+        // 根据两个元素所在树的元素个数的不同判断合并的方向
+        // 将两个元素少的集合合并到元素多个数多的集合上
+        if (sz[pRoot] < sz[qRoot]){
+            parent[pRoot] = qRoot;
+            sz[qRoot] += sz[pRoot];
+        }
+        parent[qRoot] = pRoot;
+        sz[pRoot] += sz[qRoot];
+    }
+}
+```
+
+基于Rank的优化
+
+```java
+public class QuickFind {
+    private int[] parent;
+    // 保存根节点下总共有多少子节点
+    private int[] rank;
+    public UnionFind(int size) {
+        parent = new int[size];
+        rank = int[size];
+        for (int i = 0; i < size; i++) {
+            parent[i] = i;
+            rank[i] = 1;
+        }
+    }
+
+    public int getSize() {
+        return parent.length;
+    }
+
+    public int find(int p) {
+        while (p != parent[p]) {
+            // 路径压缩
+            parent[p] = parent[parent[p]];
+            p = parent[p];
+        }
+        return p;
+    }
+
+    boolean isConnected(int p, int q){
+        return find(p) == find(q);
+    }
+
+    void union(int p, int q) {
+        int pRoot = find(p);
+        int qRoot = find(q);
+        if(pRoot == qRoot) {
+            return;
+        }
+        // 根据两个元素所在树的元素个数的不同判断合并的方向
+        // 将两个元素少的集合合并到元素多个数多的集合上
+        if (rank[pRoot] < rank[qRoot]){
+            parent[pRoot] = qRoot;
+
+        } else if(rank[pRoot] > rank[qRoot]) {
+            parent[qRoot] = pRoot;
+        } else {
+            parent[qRoot] = pRoot;
+            rank[pRoot] += 1;
+        }
+    }
+}
+```
+
+## AVLTree
+
+```java
+class AVLTree<K extends Comparable<K>, V> {
+    private class Node {
+        public K key;
+        public V value;
+        public Node left, right;
+        public int height;
+
+        public Node(K key, V value) {
+            this.key = key;
+            this.value = value;
+            left = null;
+            right = null;
+            height = 1;
+        }
+    }
+
+    private Node root;
+    private int size;
+
+    public AVLTree() {
+        root = null;
+        size = 0;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    // 获得节点的高度
+    private int getHeight(Node node) {
+        if (node == null) {
+            return 0;
+        }
+        return node.height;
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    public boolean contains(K key) {
+        return getNode(root, key) != null;
+    }
+
+    // 添加元素
+    public void add(K key, V value) {
+        root = add(root, key, value);
+    }
+
+    // 向以node为根的二分搜索树种插入元素E
+    private Node add(Node node, K key, V value) {
+        // 当我们递归到null的时候就一定要创建一个节点
+        if (node == null) {
+            size++;
+            return new Node(key, value);
+        }
+
+
+        if (key.compareTo(node.key) < 0) {
+            node.left = add(node.left, key, value);
+        } else if (key.compareTo(node.key) > 0) {
+            node.right = add(node.right, key, value);
+        } else {
+            node.value = value;
+        }
+        // 更新height
+        node.height = 1 + Math.max(getHeight(node.left), getHeight(node.right));
+        // 计算平衡因子
+        int balanceFactor = getBalanceFactor(node);
+
+        //		if (Math.abs(balanceFactor) > 1) {
+        //			System.out.println(balanceFactor);
+        //		}
+        // 平衡维护,插入的元素在不平衡的节点的左侧的左侧 LL
+        if (balanceFactor > 1 && getBalanceFactor(node.left) >= 0) {
+            return rightRotate(node);
+        }
+        // 平衡维护,插入的元素在不平衡的节点的右侧的右侧 RR
+        if (balanceFactor < -1 && getBalanceFactor(node.right) <= 0) {
+            return leftRotate(node);
+        }
+        // 平衡维护,插入的元素在不平衡的节点的左侧的右侧 LR
+        if (balanceFactor > 1 && getBalanceFactor(node.left) < 0) {
+            node.left = leftRotate(node.left);
+            return rightRotate(node);
+        }
+        // 平衡维护,插入的元素在不平衡的节点的右侧的左侧 RL
+        if (balanceFactor < -1 && getBalanceFactor(node.right) > 0) {
+            node.right = rightRotate(node.right);
+            return leftRotate(node);
+        }
+        return node;
+    }
+
+
+    private Node rightRotate(Node y) {
+        Node x = y.left;
+        Node T3 = x.right;
+        x.right = y;
+        y.left = T3;
+        // 更新height
+        y.height = Math.max(getHeight(y.left), getHeight(y.right)) + 1;
+        x.height = Math.max(getHeight(x.left), getHeight(x.right)) + 1;
+        return x;
+    }
+
+    private Node leftRotate(Node y) {
+        Node x = y.right;
+        Node T2 = x.left;
+        x.left = y;
+        y.right = T2;
+
+        y.height = Math.max(getHeight(y.left), getHeight(y.right)) + 1;
+        x.height = Math.max(getHeight(x.left), getHeight(x.right)) + 1;
+        return x;
+    }
+
+    private int getBalanceFactor(Node node) {
+        if (node == null) {
+            return 0;
+        }
+        return getHeight(node.left) - getHeight(node.right);
+    }
+
+    // 判断该二叉树是不是一颗平衡搜索树
+    public boolean isBST() {
+        ArrayList<K> keys = new ArrayList<>();
+        inOrder(root, keys);
+        for (int i = 1; i < keys.size(); i++) {
+            if (keys.get(i - 1).compareTo(keys.get(i)) > 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // 判断以Node为节点的二叉树是不是一颗平衡二叉树
+    public boolean isBalanced() {
+        return isBalanced(root);
+    }
+
+    private boolean isBalanced(Node node) {
+        if (node == null) {
+            return true;
+        }
+        int balanceFactor = getBalanceFactor(node);
+        if (balanceFactor > 1) {
+            return false;
+        }
+        return isBalanced(node.left) && isBalanced(node.right);
+    }
+
+    private void inOrder(Node node, ArrayList<K> keys) {
+        if (node == null) {
+            return;
+        }
+        inOrder(node.left, keys);
+        keys.add(node.key);
+        inOrder(node.right, keys);
+
+    }
+
+    private Node getNode(Node node, K key) {
+        if (node == null) {
+            return null;
+        }
+        if (key.compareTo(node.key) < 0) {
+            return getNode(node.left, key);
+        } else if (key.compareTo(node.key) > 0) {
+            return getNode(node.right, key);
+        } else {
+            return node;
+        }
+    }
+
+    public V get(K key) {
+        Node node = getNode(root, key);
+        return node == null ? null : node.value;
+    }
+
+    public void set(K key, V value) {
+        Node node = getNode(root, key);
+        if (node == null) {
+            throw new IllegalArgumentException(key + "doesn't exist !");
+        }
+        node.value = value;
+    }
+
+    public V remove(K key) {
+        Node node = getNode(root, key);
+        if (node != null) {
+            root = remove(root, key);
+            return node.value;
+        }
+        return null;
+    }
+
+    private Node remove(Node node, K key) {
+        if (node == null) {
+            return null;
+        }
+        Node retNode;
+        if (key.compareTo(node.key) < 0) {
+            node.left = remove(node.left, key);
+            retNode = node;
+        } else if (key.compareTo(node.key) > 0) {
+            node.right = remove(node.right, key);
+            retNode = node;
+        } else {
+            // 3种情况
+            // 待删除节点左子树为空
+            if (node.left == null) {
+                Node rightNode = node.right;
+                node.right = null;
+                size--;
+                retNode = rightNode;
+            } else if (node.right == null) {
+                // 待删除节点右子树为空
+                Node leftNode = node.left;
+                node.left = null;
+                size--;
+                retNode = leftNode;
+            } else {
+                // 待删除节点左右子树均不为空的情况
+                // 找到比待删除节点大的最小节点，即待删除节点右子树的最小节点。
+                // 用这个节点顶替待删除节点的位置
+                Node successor = minimum(node.right);
+                // 这里我们进行了删除size进行了减操作
+                successor.right = remove(node.right, successor.key);
+                successor.left = node.left;
+                node.left = node.right = null;
+                retNode = successor;
+            }
+        }
+
+        if (retNode == null) {
+            return null;
+        }
+
+        // 更新height
+        retNode.height = 1 + Math.max(getHeight(retNode.left), getHeight(retNode.right));
+        // 计算平衡因子
+        int balanceFactor = getBalanceFactor(retNode);
+
+        // 平衡维护,插入的元素在不平衡的节点的左侧的左侧 LL
+        if (balanceFactor > 1 && getBalanceFactor(retNode.left) >= 0) {
+            return rightRotate(retNode);
+        }
+        // 平衡维护,插入的元素在不平衡的节点的右侧的右侧 RR
+        if (balanceFactor < -1 && getBalanceFactor(retNode.right) <= 0) {
+            return leftRotate(retNode);
+        }
+        // 平衡维护,插入的元素在不平衡的节点的左侧的右侧 LR
+        if (balanceFactor > 1 && getBalanceFactor(retNode.left) < 0) {
+            retNode.left = leftRotate(retNode.left);
+            return rightRotate(retNode);
+        }
+        // 平衡维护,插入的元素在不平衡的节点的右侧的左侧 RL
+        if (balanceFactor < -1 && getBalanceFactor(retNode.right) > 0) {
+            retNode.right = rightRotate(retNode.right);
+            return leftRotate(retNode);
+        }
+        return retNode;
+    }
+
+    // 最小值
+    public V minimum() {
+        if (size == 0) {
+            throw new IllegalArgumentException("BST is empty");
+        }
+        return minimum(root).value;
+    }
+
+    // 返回已node为根的二分搜索树的最小值所在的节点
+    private Node minimum(Node node) {
+        if (node.left == null) {
+            return node;
+        }
+        return minimum(node.left);
+    }
+}
+```
+
+## 2-3树
+
+- 满足二分搜索树的基本性质
+- 节点可以存放一个元素或者两个元素
+
+
+
+![1552298060647](C:\Users\maxu1\Desktop\MX-Notes\notes\1552298060647.png)
+
+![1552298120553](C:\Users\maxu1\Desktop\MX-Notes\notes\1552298120553.png)
+
+
+
+
+
+
+
+## 红黑树
+
+- 每个节点或者是红色的或者是黑色的
+- 根结点都是黑色的
+- 每一个叶子节点（最后的空节点）是黑色的
+- 如果一个节点是红色的，那么他的孩子节点都是黑色的
+- 从任意一个节点到叶子节点，经过的黑色节点是一样的
+
+
+
+## HashTable
+
+```java
+/**
+ * 哈希表
+ *
+ * @author maxu
+ */
+public class HashTable<K, V> {
+    private static final int upperTol = 10;
+    private static final int lowerTol = 2;
+    private static final int initCapacity = 7;
+
+    private TreeMap<K, V>[] hashTable;
+    private int M;
+    private int size;
+
+    public HashTable(int m) {
+        M = m;
+        size = 0;
+        hashTable = new TreeMap[M];
+        for (int i = 0; i < M; i++) {
+            hashTable[i] = new TreeMap<>();
+        }
+    }
+
+    public HashTable() {
+        this(initCapacity);
+    }
+
+    private int hash(K key) {
+        return (key.hashCode() & 0x7fffffff) % M;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void add(K key, V value) {
+        TreeMap<K, V> map = hashTable[hash(key)];
+        if (map.containsKey(key)) {
+            map.put(key, value);
+        } else {
+            map.put(key, value);
+            size++;
+            if (size >= upperTol * M) {
+                resize(2 * M);
+            }
+        }
+    }
+
+    public V remove(K key) {
+        TreeMap<K, V> map = hashTable[hash(key)];
+        V ret = null;
+        if (map.containsKey(key)) {
+            ret = map.remove(key);
+            size--;
+            if (size < lowerTol * M && M / 2 > initCapacity) {
+                resize(M / 2);
+            }
+        }
+        return ret;
+    }
+
+    private void resize(int newM) {
+        TreeMap<K, V>[] newHashTable = new TreeMap[newM];
+        for (int i = 0; i < newM; i++) {
+            newHashTable[i] = new TreeMap<>();
+        }
+        int oldM = M;
+        this.M = newM;
+        for (int i = 0; i < oldM; i++) {
+            TreeMap<K, V> map = hashTable[i];
+            for (K k : map.keySet()) {
+                newHashTable[hash(k)].put(k, map.get(k));
+            }
+        }
+        this.hashTable = newHashTable;
+    }
+
+    public void set(K key, V value) {
+        TreeMap<K, V> map = hashTable[hash(key)];
+        if (!map.containsKey(key)) {
+            throw new IllegalArgumentException(key + "doesn't exist!");
+        }
+        map.put(key, value);
+    }
+
+    public boolean contains(K key) {
+        return hashTable[hash(key)].containsKey(key);
+    }
+
+    public V get(K key) {
+        TreeMap<K, V> map = hashTable[hash(key)];
+        if (!map.containsKey(key)) {
+            throw new IllegalArgumentException(key + "doesn't exist!");
+        }
+        return map.get(key);
+    }
+}
+```
+
+处理哈希冲突
+
+- 开放地址法（线性探测，平方探测）
+
+- 再哈希法
+
+  
