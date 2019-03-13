@@ -2317,6 +2317,121 @@ class AVLTree<K extends Comparable<K>, V> {
 
 
 
+![1552484055229](E:\Git\TTMS\MX-Notes\image\1552484055229.png)
+
+
+
+![1552487315383](E:\Git\TTMS\MX-Notes\image\1552487315383.png)
+
+![1552487352383](E:\Git\TTMS\MX-Notes\image\1552487352383.png)
+
+![1552487602526](E:\Git\TTMS\MX-Notes\image\1552487602526.png)
+
+
+
+![1552490565446](E:\Git\TTMS\MX-Notes\image\1552490565446.png)
+
+```java
+/**
+ * @author maxu
+ * @date 2019/3/13
+ */
+public class RBTree<K extends Comparable<K>, V> {
+    private static boolean RED = true;
+    private static boolean BLACK = false;
+    private class Node {
+        public K key;
+        public V value;
+        public Node left, right;
+        private boolean color;
+
+        public Node(K key, V value) {
+            this.key = key;
+            this.value = value;
+            left = null;
+            right = null;
+            // TODO 为何初始化为红色
+            color = RED;
+        }
+
+    }
+
+    private Node root;
+    private int size;
+
+    public RBTree() {
+        root = null;
+        size = 0;
+    }
+
+    // 添加元素
+    public void add(K key, V value) {
+        root = add(root, key, value);
+        root.color = BLACK;// 最终根节点是黑色节点
+    }
+
+    private Node add(Node node, K key, V value) {
+        if (node == null) {
+            size++;
+            return new Node(key, value);
+        }
+        if (node.key.compareTo(key) < 0) {
+            node.left = add(node.left, key,value);
+        } else if (node.key.compareTo(key) > 0) {
+            node.right = add(node.right, key, value);
+        } else {
+            node.value = value;
+        }
+
+        if (isRed(node.right) && !isRed(node.left)) {
+            node = leftRotate(node);
+        }
+        if (isRed(node.left) && isRed(node.left.left)) {
+            node = rightRotate(node);
+        }
+        if (isRed(node.left) && isRed(node.right)) {
+            flipColors(node);
+        }
+        return node;
+
+    }
+
+    private void flipColors(Node node) {
+        node.color = RED;
+        node.left.color = BLACK;
+        node.right.color = BLACK;
+
+    }
+
+    private Node rightRotate(Node node) {
+        Node x = node.left;
+        // 右旋转
+        node.left = x.right;
+        x.right = node;
+        x.color = node.color;
+        node.color = RED;
+        return x;
+    }
+
+    private Node leftRotate(Node node) {
+        Node x = node.right;
+        // 左旋转
+        node.right = x.left;
+        x.left = node;
+        x.color = node.color;
+        node.color = RED;
+        return x;
+    }
+
+    private boolean isRed(Node node) {
+        return node.color;
+    }
+
+}
+```
+
+
+
 ## HashTable
 
 ```java
