@@ -1,3 +1,5 @@
+
+
 ![img](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551436864811&di=e3b96294b0d5f8a8734dfb650caa9c44&imgtype=0&src=http%3A%2F%2Fimg2018.cnblogs.com%2Fblog%2F1228717%2F201902%2F1228717-20190203145702646-2102876188.png)
 
 ##### 程序计数器
@@ -138,4 +140,97 @@ JDK6+ 结果为 false  true
 java内存模型（Java Memory Model）本身是一种抽象的概念，并不真实存在，它描述的是一组规则或者规范，通过这组规则和规范定义了程序中各个变量（包括实例字段，静态字段，和构成数组对象的元素）的访问方式。
 
 ![1551780285060](C:\Users\maxu1\Desktop\MX-Notes\notes\1551780285060.png)
+
+JMM中的主内存
+
+- 存储Java实例对象
+- 包括成员变量，类信息，常量，静态变量等
+- 属于数据共享的区域，多线程并发操作时候，会引起线程安全问题
+
+JMM的工作内存
+
+- 存储当前方法的所有本地变量信息，本地变量对其它线程是不可见的
+- 字节码行号指示器，Native方法信息
+- 属于线程私有数据区域，不存在线程安全问题
+
+JMM内存模型和Java内存区域划分的概念层次
+
+JMM描述的是一组规则，围绕原子性，有序性，可见性展开的
+
+存在私有区域和公有区域
+
+主内存与工作内存的数据存储类型以及操作方式归纳
+
+- 方法里的基本数据类型本地变量将存储在工作内存中的栈帧中
+- 引用类型的本地变量，引用存储在工作内存中，实例存储在主内存中
+- 成员变量，static变量，类信息均会存储在主内存中
+- 主内存共享的方式是线程拷贝一份数据到工作内存，操作完成后刷新主内存中。
+
+JMM如何解决可见性？
+
+##### 指令重排序需要满足的条件
+
+- 单线程环境下不能改变程序的结果
+
+- 存在数据依赖关系的不允许重排序
+
+- 无法通过happens-before原则推导出来的，才能进行指令重排序
+
+
+A操作的结果需要对B操作可见，则A与B存在happens-before关系
+
+那么操作A在内存上所做的操作，对操作B都是可见的。
+
+```java
+i = 1; // 线程a执行
+j = i; // 线程b执行
+```
+
+
+
+![1552873261221](E:\Git\TTMS\MX-Notes\image\1552873261221.png)
+
+##### volatile：JVM提供的轻量级同步机制
+
+- 保证被volatile修饰的共享变量对所有线程总是可见的
+- 禁止指令重排序优化
+
+volatile变量为何立即可见？
+
+当写一个volatile变量时，JMM会把该线程对应的工作内存中的共享变量值刷新到主内存中。
+
+当读取一个volatile变量时，JMM会把该线程对应的工作内存置为无效。
+
+volatile如何禁止重排优化
+
+内存屏障
+
+1. 保证特定操作的执行排序
+2. 保证某些变量的内存可见性
+3. 通过插入内存屏障指令禁止在内存屏障前后的指令执行重排序优化
+4. 强制刷出各种CPU的缓存数据，因此任何CPU上的线程都能读取到这些数据的最新版本
+
+```java
+public class Singleton {
+    private volatile static Singleton instance;
+    private Singleton(){}
+    public static Singleton getInstance() {
+        // 第一次检测
+        if(instance == null){
+            // 同步
+            synchronized (Singleton.class) {
+                if(instance == null) {
+                    // 多线程环境下可能会出现问题的地方
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+}
+```
+
+![1552874721232](E:\Git\TTMS\MX-Notes\image\1552874721232.png)
+
+
 
