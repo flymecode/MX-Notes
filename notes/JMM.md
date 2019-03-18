@@ -16,7 +16,7 @@
 
 - 包含多个栈帧
 
-  ![1551444762538](C:\Users\maxu1\Desktop\MX-Notes\image\1551444762538.png)
+  ![1551444762538](https://github.com/flymecode/MX-Notes/blob/master/image/1551444762538.png)
 
 ##### 局部变量表和操作数栈
 
@@ -127,11 +127,11 @@ System.out.println(s3 == s4);
 
 JDK6 false false
 
-![1551525995556](C:\Users\maxu1\Desktop\MX-Notes\image\1551525995556.png)
+![1551525995556](https://github.com/flymecode/MX-Notes/blob/master/image/1551525995556.png)
 
 JDK6+ 结果为 false  true
 
-![1551526023990](C:\Users\maxu1\Desktop\MX-Notes\image\1551526023990.png)
+![1551526023990](https://github.com/flymecode/MX-Notes/blob/master/image/1551526023990.png)
 
 
 
@@ -139,7 +139,7 @@ JDK6+ 结果为 false  true
 
 java内存模型（Java Memory Model）本身是一种抽象的概念，并不真实存在，它描述的是一组规则或者规范，通过这组规则和规范定义了程序中各个变量（包括实例字段，静态字段，和构成数组对象的元素）的访问方式。
 
-![1551780285060](C:\Users\maxu1\Desktop\MX-Notes\notes\1551780285060.png)
+![1551780285060](https://github.com/flymecode/MX-Notes/blob/master/image/1551780285060.png)
 
 JMM中的主内存
 
@@ -188,7 +188,7 @@ j = i; // 线程b执行
 
 
 
-![1552873261221](E:\Git\TTMS\MX-Notes\image\1552873261221.png)
+![1552873261221](https://github.com/flymecode/MX-Notes/blob/master/image/1552873261221.png)
 
 ##### volatile：JVM提供的轻量级同步机制
 
@@ -230,7 +230,76 @@ public class Singleton {
 }
 ```
 
-![1552874721232](E:\Git\TTMS\MX-Notes\image\1552874721232.png)
+![1552874721232](https://github.com/flymecode/MX-Notes/blob/master/image/1552874721232.png)
 
 
 
+### CAS
+
+- 支持原子更新操作，使用与计数器，序列发生器等场景
+- 属于乐观锁机制
+- CAS操作失败时，由开发者决定继续尝试，还是还是执行别的操作，不会被阻塞
+
+##### CAS思想
+
+包含三个操作数，内存位置V，预期原值A和新值B
+
+缺点
+
+循环时间长，开销大
+
+只能保证一个共享变量
+
+ABA问题
+
+##### Java线程池
+
+![1552902848314](https://github.com/flymecode/MX-Notes/blob/master/image/1552902848314.png)
+
+##### Fork/Join框架
+
+Work-Stealing算法：某个线程从其它线程队列里窃取任务来执行
+
+![1552902950158](https://github.com/flymecode/MX-Notes/blob/master/image/1552902950158.png)
+
+##### 为什么要使用线程池？
+
+- 降低资源消耗
+- 提高线程的可管理性
+
+![1552903339093](https://github.com/flymecode/MX-Notes/blob/master/image/1552903339093.png)
+
+```java
+public ThreadPoolExecutor(int corePoolSize, // 核心线程数量
+                              int maximumPoolSize, // 线程不够用时能够创建的最大线程数
+                              long keepAliveTime, // 空闲时间保持线程的存活时间
+                              TimeUnit unit,
+                              BlockingQueue<Runnable> workQueue, // 任务等待队列
+                              ThreadFactory threadFactory, // 线程工厂
+                          		// 线程饱和策略
+                              RejectedExecutionHandler handler ) {}
+```
+
+饱和策略
+
+- AbortPolicy:直接抛出异常，这是默认策略
+- CallerRunsPolicy:调用者所在的线程来执行任务
+- DiscardOldestPolicy:丢弃队列中靠前的任务，并执行当前任务
+- DiscardPolicy:直接丢弃任务
+- 实现RejectedExecutionHandler接口自定义handler
+
+![1552906940511](https://github.com/flymecode/MX-Notes/blob/master/image/1552906940511.png)
+
+![1552909427115](https://github.com/flymecode/MX-Notes/blob/master/image/1552909427115.png)
+
+![1552908241601](https://github.com/flymecode/MX-Notes/blob/master/image/1552908241601.png)
+
+##### 线程生命周期
+
+![1552909755921](https://github.com/flymecode/MX-Notes/blob/master/image/1552909755921.png)
+
+##### 线程池的大小如何选定？
+
+CPU密集型：线程数=按照核数+1设定
+
+I/O密集型：线程=CPU核数*（1+平均等待时间/平均工作时间）
