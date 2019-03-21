@@ -741,3 +741,35 @@ public static void main(String[] args) {
 ```
 
 补充：一个程序是一个可以执行的文件，而一个进程是执行中的实例。
+
+##### 等待超时机制伪代码
+
+```java
+public synchronized Object get(long mills) throw InterruptedException {
+    long future = System.currentTimeMills() + mills;
+    long remaining = mills;
+    // 当超时大于0并且result返回值不满足要求
+    while((result == null) && remaining > 0) {
+        wait(remaining);
+        remaining = future - System.currentTimeMillis();
+    }
+    return result;
+}
+```
+
+##### 等待/通知经典范式
+
+```java
+synchronized(对象) {
+    while(条件不满足) {
+        对象.wait();
+    }
+    对应的处理逻辑
+}
+
+synchronized(对象) {
+	改变条件
+    对象.notifyAll();
+}
+```
+

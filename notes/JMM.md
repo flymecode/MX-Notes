@@ -201,7 +201,7 @@ volatile变量为何立即可见？
 
 当读取一个volatile变量时，JMM会把该线程对应的工作内存置为无效。
 
-volatile如何禁止重排优化
+##### volatile如何禁止重排优化？
 
 内存屏障
 
@@ -229,6 +229,19 @@ public class Singleton {
     }
 }
 ```
+
+在instance= new Singleton();创建一个对象的时候，这一行可以分解为如下三行代码。
+
+```java
+memory = allocate(); // 1.分配对象的内存空间
+instance = memory(); // 3.设置instance指向分配的内存地址，此时对象还没初始化！
+
+ctorInstance(memory); // 2.初始化对象
+```
+
+由于2和3发生了重排序                                                                                                                                                                                                                                                                                                                                                                     
+
+
 
 ![1552874721232](https://github.com/flymecode/MX-Notes/blob/master/image/1552874721232.png)
 
