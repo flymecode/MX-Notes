@@ -264,3 +264,51 @@ System.out.println(t.hashCode() + " " + tb.hashCode());
 
 equals与hashCode的定义必须一致，如果x.equals(y),那么x.hashCode()就必须与y.hashCode()具有相同的值。比如，如果用定义的Employee.equals比较雇员的ID，那么hashCode方法就需要散列ID,而不是雇员的姓名或者存储地址。
 
+### Java异常体系
+
+![1553175374905](E:\Git\TTMS\MX-Notes\image\1553175374905.png)
+
+##### 概念角度解析Java的异常处理机制
+
+- Error：程序无法处理的系统错误，编译器不做检查
+- Exception:程序可以处理的异常，捕获后可能恢复
+
+ 总结：前者是程序无法处理的异常，后者是可以处理的异常 
+
+##### 异常类
+
+RuntimeException
+
+- NullPointerException 空指针异常
+- ClassCastException 类型强制转换异常
+- IllegalArgumentException 传递非法参数异常
+- IndexOutOfBoundsException 下标越界异常
+- NumberFormatException 数字格式异常
+
+非RuntimeException
+
+- ClassNotFoundException 找不到指定Class异常
+- IOException IO操作异常
+
+Error
+
+- NoClassDefFoundError 找不到class定义的异常
+- StackOverflowerError 深递归导致栈被耗尽而抛出异常
+- OutOfMemoryError 内存溢出异常
+
+##### Java异常处理机制
+
+抛出异常：创建异常对象，交由运行时系统处理
+
+捕获异常：寻找合适的异常处理器处理异常，否则终止运行
+
+##### Java异常处理的原则
+
+- 具体明确：抛出的异常应该能够通过类名称和message准确的说明异常的类型和产生异常的原因
+- 提早抛出：应该尽可能的早发现并抛出异常，便于精确定位
+- 延迟捕获：异常的捕获和处理应尽可能延迟，让掌握更多信息的作用域来处理异常
+
+##### Java异常处理消耗性能的地方
+
+- try-catch块影响JVM的优化
+- 异常对象实例需要保存栈的快照等信息，消耗性能
