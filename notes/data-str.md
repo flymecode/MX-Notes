@@ -1451,7 +1451,7 @@ public class MaxHeap<E extends Comparable<E>> {
         return 2 * index + 1;
     }
      //返回完全二叉树的数组表示中，一个索引所表示的元素的右孩子节点的索引
-    private int leftChild(int index){
+    private int rightChild(int index){
         return 2 * index + 2;
     }
 }
