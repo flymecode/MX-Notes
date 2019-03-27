@@ -46,9 +46,23 @@ find -name
 
 
 
-sed
+##### 快捷键
 
-awk
+ctrl+l
+
+ctrl+u
+
+ctrl + a
+
+ctrl + e
+
+ctrl + r
+
+
+
+
+
+
 
 
 
