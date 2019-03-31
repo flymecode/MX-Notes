@@ -275,11 +275,7 @@ ctorInstance(memory); // 2.初始化对象
 
 由于2和3发生了重排序                                                                                                                                                                                                                                                                                                                                                                     
 
-
-
 ![1552874721232](https://github.com/flymecode/MX-Notes/blob/master/image/1552874721232.png)
-
-
 
 ### CAS
 
