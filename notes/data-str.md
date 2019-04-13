@@ -2002,6 +2002,7 @@ public class QuickFind {
 
 ```java
 class AVLTree<K extends Comparable<K>, V> {
+    
     private class Node {
         public K key;
         public V value;
@@ -2058,7 +2059,6 @@ class AVLTree<K extends Comparable<K>, V> {
             return new Node(key, value);
         }
 
-
         if (key.compareTo(node.key) < 0) {
             node.left = add(node.left, key, value);
         } else if (key.compareTo(node.key) > 0) {
@@ -2066,14 +2066,11 @@ class AVLTree<K extends Comparable<K>, V> {
         } else {
             node.value = value;
         }
+        
         // 更新height
         node.height = 1 + Math.max(getHeight(node.left), getHeight(node.right));
         // 计算平衡因子
         int balanceFactor = getBalanceFactor(node);
-
-        //		if (Math.abs(balanceFactor) > 1) {
-        //			System.out.println(balanceFactor);
-        //		}
         // 平衡维护,插入的元素在不平衡的节点的左侧的左侧 LL
         if (balanceFactor > 1 && getBalanceFactor(node.left) >= 0) {
             return rightRotate(node);
@@ -2339,6 +2336,7 @@ class AVLTree<K extends Comparable<K>, V> {
 public class RBTree<K extends Comparable<K>, V> {
     private static boolean RED = true;
     private static boolean BLACK = false;
+    
     private class Node {
         public K key;
         public V value;
@@ -2353,7 +2351,6 @@ public class RBTree<K extends Comparable<K>, V> {
             // TODO 为何初始化为红色
             color = RED;
         }
-
     }
 
     private Node root;
@@ -2393,14 +2390,12 @@ public class RBTree<K extends Comparable<K>, V> {
             flipColors(node);
         }
         return node;
-
     }
 
     private void flipColors(Node node) {
         node.color = RED;
         node.left.color = BLACK;
         node.right.color = BLACK;
-
     }
 
     private Node rightRotate(Node node) {
@@ -2426,7 +2421,6 @@ public class RBTree<K extends Comparable<K>, V> {
     private boolean isRed(Node node) {
         return node.color;
     }
-
 }
 ```
 
@@ -2538,6 +2532,10 @@ public class HashTable<K, V> {
 
 - 开放地址法（线性探测，平方探测）
 
+- 链地址法
+
 - 再哈希法
+
+- 建立公共溢出区
 
   
