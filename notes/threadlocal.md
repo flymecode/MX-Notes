@@ -7,6 +7,8 @@
  例如userId 或者 Transaction ID
 - 每个线程都有一个指向threadLocal实例的弱引用，只要线程一直存活或者该threadLocal实例能被访问到，都不会被垃圾回收掉
 
+ThreadLocal本身不保存数据，是依靠线程的ThreadLocalMap来保存数据的。ThreadLocal只是作为key，保存在ThreadLocalMap中。
+所以
 # get
 ```java
 public T get() {
@@ -39,6 +41,8 @@ private T setInitialValue() {
             createMap(t, value);
         return value;
     } 
+    
+    
 ```
 ThreadLocal 内部有一个 ThreadLocalMap内部类，但是ThreadLocal内部没有持有这个内部类的变量，
 这个变量的持有至是Thread,所以我们就明白了为什么ThreadLocal是如何做到，每一个线程维护变量的副本（引用），就是在ThreadLocal内部有一个
@@ -63,6 +67,30 @@ public DateUtils {
     };
 }
 ```
+
+
+ThreadLocalMap内部定义了弱引用的Entry用来存放key和value，定义了Entry数组存放Entry,数组的默认容量为16,并且数组的容量必须为2的幂，比如32,64
+,128等等。
+
+1.内存泄露
+
+ThreadLocalMap使用ThreadLocal的弱引用作为key，如果一个ThreadLocal没有外部强引用来引用它，那么系统 GC 的时候，这个ThreadLocal势必会被回收，
+ThreadLocalMap中就会出现key为null的Entry，就没有办法访问这些key为null的Entry的value，如果当前线程再迟迟不结束的话，这些key为null的Entry的
+value就会一直存在一条强引用链：Thread Ref -> Thread -> ThreadLocalMap -> Entry -> value永远无法回收，造成内存泄漏。
+
+ThreadLocalMap的设计中已经考虑到这种情况，也加上了一些防护措施：在ThreadLocal的get(),set(),remove()的时候都会清除线程ThreadLocalMap里所
+有key为null的value。
+
+2.为什么用弱引用？
+
+key 使用强引用：引用的ThreadLocal的对象被回收了，但是ThreadLocalMap还持有ThreadLocal的强引用，如果没有手动删除，ThreadLocal不会被回收，
+导致Entry内存泄漏。
+
+key 使用弱引用：引用的ThreadLocal的对象被回收了，由于ThreadLocalMap持有ThreadLocal的弱引用，即使没有手动删除，ThreadLocal也会被回收。
+value在下一次ThreadLocalMap调用set,get，remove的时候会被清除,否则value内存溢出。
+
+由于ThreadLocalMap的生命周期跟Thread一样长，如果没有手动删除对应key，都会导致内存泄漏，但是使用弱引用可以多一层保障：弱引用ThreadLocal不会
+内存泄漏，对应的value在下一次ThreadLocalMap调用set,get,remove的时候会被清除。
 
 
 
