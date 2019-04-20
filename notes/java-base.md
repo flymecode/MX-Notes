@@ -1,21 +1,26 @@
 
 
+
+
 [TOC]
+
+# Java 基础
 
 ![overview](C:\Users\maxu1\Desktop\MX-Notes\notes\overview.png)
 
-### 枚举  
+## 枚举  
 
-- 创建Enum时，编译器会为你生成一个相关的类，这个类继承自`Java.lang.Enum`
+- 创建 `Enum` 时，编译器会为你生成一个相关的类，这个类继承自 `Java.lang.Enum`
+- Enum 会自动创建 toString() 和 name() 方法，以便可以方便的显示某个 enum 实例的名字；
+- Enum 还会创建 ordinal() 方法，用来表示某个特定 Enum 常量的声明顺序，从0开始；
+- Enum 创建了 static values()方法，用来按照 Enum 常量的声明顺序，产生这些常量值构成的数组。
+- valueOf() 是在 Enum中定义的 static 方法，它根据给定的名字返回相应的 Enum 实例，如果不存在给定名字的实例，将会抛出异常。
+- 可以使用 == 来比较 Enum 实例，编译器自动为你提供了 equals 和 hashcode 方法。
+- Enum类实现了 Comparable 接口，所以它具有 compareTo() 方法。
 
-- enum会自动创建toString()和name()方法，以便可以方便的显示某个enum实例的名字；
-- enum还会创建ordinal()方法，用来表示某个特定enum常量的声明顺序，从0开始；
-- enum创建了static values()方法，用来按照enum常量的声明顺序，产生这些常量值构成的数组。
-- valueOf()是在Enum中定义的static方法，它根据给定的名字返回相应的enum实例，如果不存在给你名字的实例，将会抛出异常。
-- 可以使用==来比较enum实例，编译器自动为你提供了equals和hashcode方法。
-- Enum类实现了Comparable接口，所以它具有compareTo()方法。
 
-##### 特点：
+
+### 特点：
 
 - 1、枚举的直接父类是java.lang.Enum，但是不能显示的继承Enum
 - 2、枚举就相当于一个类，可以定义构造方法、成员变量、普通方法和抽象方法
@@ -26,7 +31,9 @@
 - 7、枚举类可以有构造器，但必须是private的，它默认的也是private的。
 - 8、枚举类也可以有抽象方法，但是枚举项必须重写该方法
 
-##### 创建
+
+
+### 创建
 
 ```java
 public enum Color {  
@@ -35,7 +42,7 @@ public enum Color {
 ```
 
 ```java
-JDK1.6之前的switch语句只支持int,char,enum类型，使用枚举，能让我们的代码可读性更强。
+// JDK1.6之前的switch语句只支持int,char,enum类型，使用枚举，能让我们的代码可读性更强。
 
 enum Signal {  
     GREEN, YELLOW, RED  
@@ -58,7 +65,7 @@ public class TrafficLight {
 }
 ```
 
-如果打算自定义自己的方法，那么必须在enum实例序列的最后添加一个分号。而且 Java 要求必须先定义 enum 实例。
+​	如果打算自定义自己的方法，那么必须在 enum 实例序列的最后添加一个分号。而且  Java  要求必须先定义 enum 实例。
 
 ```java
 public enum Color {  
@@ -96,7 +103,9 @@ public enum Color {
 }
 ```
 
-##### 覆盖枚举的方法
+
+
+### 覆盖枚举的方法
 
 ```java
 public enum Color {  
@@ -117,7 +126,9 @@ public enum Color {
 }
 ```
 
-##### 实现接口
+
+
+### 实现接口
 
 所有的枚举都继承自`java.lang.Enum`类。由于Java 不支持多继承，所以枚举对象不能再继承其他类。 
 
@@ -136,7 +147,7 @@ public enum Color implements Behaviour{
         this.name = name;  
         this.index = index;  
     }  
-//接口方法  
+	//接口方法  
     @Override  
     public String getInfo() {  
         return this.name;  
@@ -149,11 +160,15 @@ public enum Color implements Behaviour{
 }
 ```
 
-### 内部类
+
+
+## 内部类
 
 - 内部类是定义在另一个类中的类
 
-##### 为什么要使用内部类呢？
+
+
+### 为什么要使用内部类呢？
 
 1. 内部类方法可以访问该类定义所在的作用域中的数据，包含私有的数据
 2. 内部类可以对同一个包中的其它类隐藏起来
@@ -161,11 +176,11 @@ public enum Color implements Behaviour{
 
 
 
-##### 内部类访问的局部变量必须用final修饰,为什么?
+### 内部类访问的局部变量必须用final修饰,为什么?
 
 ​	因为当调用内部类方法时,在方法体中访问的局部变量如果没有用`final`修饰,他的生命周期和方法的生命周期是一样的,当方法弹栈,这个局部变量也会消失,那么如果局部内部类对象还没有马上消失，如果还想用这个局部变量,就没有了,如果用`final`修饰，局部变量会在类加载的时候进入常量池,即使方法弹栈,常量池的常量还在,也可以继续使用
 
-##### 注意：
+注意：
 
 - 内部类中的静态域必须是final修饰的，原因很简单，我们希望静态域只有一个实例，不过对于外部对象，会分别有一个内部实例。如果静态域不是final修饰它可能使不唯一的。
 
@@ -180,7 +195,7 @@ public enum Color implements Behaviour{
 
 ![1549014708591](https://github.com/flymecode/MX-Notes/blob/master/image/1549014708591.png)
 
-### 抽象类
+## 抽象类
 
 - 如果自下而上在类的继承层次结构中，位于上层的类更具有通用性，甚至可能更加抽象。
 - 祖先类更加通用，人们只是将它作为其它类的基类，而不是作为想使用特定的实例类。
@@ -191,22 +206,22 @@ public enum Color implements Behaviour{
 
 
 
-### 多态
+## 多态
 
 - 一个对象变量，可以指示多种实际的类型的现象被称为多态，在运行的时候，能够自动的选择调用哪个方法的现象被称为动态绑定。
 - 如果不想让一个方法具有虚拟特征可以将方法设置为final
 - 不能将一个父类的引用赋值给子类的变量。
 - 在Java中，子类的数组可以转化为父类的数组的引用，而不用采用强制类型转换。
 
-### fianl类和方法
+## fianl类和方法
 
 - 不允许扩展的类被称为final类。
 - 被final修饰的方法不能覆盖这个方法
 - 域也可以被声明为 final。对于 final 域来说，构造对象之后就不允许改变它们的值了。不过， 如果将一个类声明为 final， 只有其中的方法自动地成为 final,而不包括域
 
-### equals方法与 hashCode方法
+## equals方法与 hashCode方法
 
-##### equals:
+### equals:
 
 - 用于检测一个对象是否等于另一个对象。
 - 在Object类中，这个方法判断对象是否具有相同的引用，如果这两个对象具有相同的
@@ -238,7 +253,7 @@ ClassName other = (ClassName) othreName;
 
 
 
-##### HashCode:
+### HashCode:
 
 ```java
 String s = "ok";
@@ -264,18 +279,18 @@ System.out.println(t.hashCode() + " " + tb.hashCode());
 
 equals与hashCode的定义必须一致，如果x.equals(y),那么x.hashCode()就必须与y.hashCode()具有相同的值。比如，如果用定义的Employee.equals比较雇员的ID，那么hashCode方法就需要散列ID,而不是雇员的姓名或者存储地址。
 
-### Java异常体系
+## Java异常体系
 
 ![1553175374905](E:\Git\TTMS\MX-Notes\image\1553175374905.png)
 
-##### 概念角度解析Java的异常处理机制
+### 概念角度解析Java的异常处理机制
 
 - Error：程序无法处理的系统错误，编译器不做检查
 - Exception:程序可以处理的异常，捕获后可能恢复
 
  总结：前者是程序无法处理的异常，后者是可以处理的异常 
 
-##### 异常类
+### 异常类
 
 RuntimeException
 
@@ -296,19 +311,107 @@ Error
 - StackOverflowerError 深递归导致栈被耗尽而抛出异常
 - OutOfMemoryError 内存溢出异常
 
-##### Java异常处理机制
+### Java异常处理机制
 
 抛出异常：创建异常对象，交由运行时系统处理
 
 捕获异常：寻找合适的异常处理器处理异常，否则终止运行
 
-##### Java异常处理的原则
+### Java异常处理的原则
 
 - 具体明确：抛出的异常应该能够通过类名称和message准确的说明异常的类型和产生异常的原因
 - 提早抛出：应该尽可能的早发现并抛出异常，便于精确定位
 - 延迟捕获：异常的捕获和处理应尽可能延迟，让掌握更多信息的作用域来处理异常
 
-##### Java异常处理消耗性能的地方
+### Java异常处理消耗性能的地方
 
 - try-catch块影响JVM的优化
 - 异常对象实例需要保存栈的快照等信息，消耗性能
+
+
+
+## 回调函数
+
+### 回调函数涉及的三个函数
+
+- 登记回调函数
+- 回调函数
+- 响应回调函数
+
+### 
+
+### 解释
+
+​	你到一个商店买东西，刚好你要的东西没有货，于是你在店员那里留下了你的电话。过了几天店里有货了，店员就打了你的电话，然后你接到电话后就到店里去取了货。在这个样例里，你的电话号码就叫回调函数。你把电话留给店员就叫登记回调函数，店里后来有货了叫做触发了回调关联的事件。店员给你打电话叫做调用回调函数，你到店里去取货叫做响应回调事件。回答完成。来自知乎[点击打开链接](http://www.zhihu.com/question/19801131)
+
+
+
+### 代码实现
+
+
+
+```java
+// 预定义业务逻辑
+public interface Callback {
+    // 响应回调函数
+    public void slove();
+}
+```
+
+实现上面的接口，登记回调和响应回调的类
+
+```java
+public class A implements CallBack {
+    B b = new B();
+    
+    @Override
+	// 响应回调函数
+    public void slove() {
+        System.out.println("the problem is solve!");
+    }
+    /*
+	 * 登记回调函数
+	 */
+    public void askQuestion(){
+        System.out.println("ask b solve the problem!");
+        /*
+		 * 自己去做其它事
+		 */
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                System.out.println("A want to do another thing!");
+            }
+        }).start();
+        /*
+		 * ask b to solve this problem
+		 */
+        this.b.call(this);
+    }
+    public static void main(String[] args)  {
+        A a = new A();
+        a.askQuestion();
+    }
+}
+```
+
+```java
+// 实现回调的类
+public class B {
+    /*
+	 * 回调函数
+	 */
+    public void call(CallBack a){
+        /*
+		 * b help a solve the priblem
+		 */
+        System.out.println("b help a solve the problem!");
+        /*
+		 * call back
+		 */
+        a.slove();
+
+    }
+}
+```
