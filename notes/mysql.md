@@ -1,79 +1,85 @@
-如何设计一个关系型数据库？
+[TOC]
+
+
+
+# MySQL
 
 ![1550129557975](https://github.com/flymecode/MX-Notes/blob/master/image/1550129557975.png)
 
 ## 索引模块
 
-##### 为什么要使用索引？
+### 为什么要使用索引？
 
-使用索引能够避免我们全表查找数据
+​	使用索引能够避免我们全表查找数据
 
-##### 什么样的信息能够成为索引？
+### 什么样的信息能够成为索引？
 
 主键
 
-##### 索引的数据结构？
+### 索引的数据结构？
 
 二叉查找树
 
-B+Tree 更适合用来做存储索引
+- B+Tree 更适合用来做存储索引
 
-B+Tree树的磁盘读写代价更低
+- B+Tree树的磁盘读写代价更低
 
-B+Tree的铲鲟效率更加稳定
+- B+Tree的铲鲟效率更加稳定
 
-B+Tree更有利于对数据库的扫描
+- B+Tree更有利于对数据库的扫描
 
-![1550130972854](https://github.com/flymecode/MX-Notes/blob/master/image/1550130972854.png)
+特点
 
-##### 密集索引和稀疏索引的区别？
-
-密集索引文件中每一个搜索码值都对应一个索引值
-
-稀疏索引文件只为索引码的某些值建立索引项
-
-MyISAM 是稀疏索引
-
-InnoDB有且仅有一个密集索引
+- 非叶子节点的子树指针与关键字个数相同
+- 非叶子节点的子树指针P[i]，指向关键字值[K[i],K[i+1]]的子树
+- 非叶子节点仅仅用来做索引，数据都是保存在叶子节点中
+- 所有叶子节点具有一个链指针指向下一个叶子节点
 
 
 
-![1550137599967](https://github.com/flymecode/MX-Notes/blob/master/image/1550137599967.png)
+### 密集索引和稀疏索引的区别？
 
-非主键索引存储相关键位和其对应的主键值，包含两次查找
+- 密集索引文件中每一个搜索码值都对应一个索引值
+
+- 稀疏索引文件只为索引码的某些值建立索引项
+
+- MyISAM 是稀疏索引
+
+- InnoDB有且仅有一个密集索引
 
 
 
-如何定位并优化慢查询Sql
+### InnoDB的索引
 
-show variables like '%query%'
-show status like '%slow_queries%'
+- 若一个主键被定义，该主键则作为密集索引
+- 若没有主键被定义，该表的第一个唯一非空索引则作为密集索引
+- 若都不满足以上条件，innodb内部会生成一个隐藏的主键
+- 非主键索引存储相关键位和其对应的主键值，包含两次查找
+
+
+
+### 如何定位并优化慢查询Sql
+
+1. show variables like '%query%'
+2. show status like '%slow_queries%'
 
 ![1550139826980](https://github.com/flymecode/MX-Notes/blob/master/image/1550139826980.png)
 
 ![1550139854091](https://github.com/flymecode/MX-Notes/blob/master/image/1550139854091.png)
 
-打开慢查询
+1. 打开慢查询
+2. set global slow_query_log = on
+3. set global long_query_time = 1;
+4. 根据慢日志定位慢查询 sql
+5. 添加explain分析sql
 
-set global slow_query_log = on
-
-set global long_query_time = 1;
-
-根据慢日志定位慢查询 sql
-
-添加explain分析sql
-
-让sql尽量走索引
-
-
-
-
+### 让sql尽量走索引
 
 ![1550139799373](https://github.com/flymecode/MX-Notes/blob/master/image/1550139799373.png)
 
 
 
-联合索引（由多列组成的索引）的最左匹配原则的成因？
+### 联合索引（由多列组成的索引）的最左匹配原则的成因？
 
 
 
@@ -83,7 +89,7 @@ mysql创建复合索引首先对sql最左边的索引字段进行排序，在排
 
 
 
-索引是建立的越多越好吗？
+### 索引是建立的越多越好吗？
 
 数据量小的表不需要建立索引，建立会增加额外的索引开销
 
@@ -93,35 +99,11 @@ mysql创建复合索引首先对sql最左边的索引字段进行排序，在排
 
 
 
-锁模块
-
-查询隔离级别
-
-select @@ tx_isolation
-
-设置隔离级别
-
-set session transaction isolation level read uncommitted
-
-![1550218906156](https://github.com/flymecode/MX-Notes/blob/master/image/1550218906156.png)
-
-![1550221752136](https://github.com/flymecode/MX-Notes/blob/master/image/1550221752136.png)
-
-![1550223134805](https://github.com/flymecode/MX-Notes/blob/master/image/1550223134805.png)
-
-![1550223906919](https://github.com/flymecode/MX-Notes/blob/master/image/1550223906919.png)
-
-![1550224011169](https://github.com/flymecode/MX-Notes/blob/master/image/1550224011169.png)
-
-![1550224407677](https://github.com/flymecode/MX-Notes/blob/master/image/1550224407677.png)
-
 ### 隔离级别
 
 ​	一个事务与其它事务的隔离程度称为隔离级别
 
-
-
-当有两个事务并发执行的时候，有可能发生脏读，不可重复读，幻读
+​	当有两个事务并发执行的时候，有可能发生脏读，不可重复读，幻读
 
 | 类型       | 描述                                                         |
 | ---------- | ------------------------------------------------------------ |
@@ -138,7 +120,7 @@ set session transaction isolation level read uncommitted
 | 可重复读 | 确保tx1可以多次从一个字段中取到相同的值，即tx1执行期间禁止其它的事务可以对这个字段进行更新。 |
 | 串行化   | 确保tx1可以多次从一个表找那个读取到相同的行，在tx1执行期间，禁止其它的事务对这个表进行添加，删除，更新操作。 |
 
-##### 
+
 
 
 
@@ -152,17 +134,17 @@ MyISAM引擎使用B+Tree作为索引结构，叶节点的data域存放的是数�
 
 
 
-![img](https:////upload-images.jianshu.io/upload_images/1293895-2ee0a19637a08ee9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/664/format/webp)
+![1556173860235](..\image\%5CGit%5CTTMS%5CMX-Notes%5Cimage%5C1556173860235.png)
 
-图 8 Primary Key
+​										图 8 Primary Key
 
 这里设表一共有三列，假设我们以Col1为主键，则图8是一个MyISAM表的主索引（Primary key）示意。可以看出MyISAM的索引文件仅仅保存数据记录的地址。在MyISAM中，主索引和辅助索引（Secondary key）在结构上没有任何区别，只是主索引要求key是唯一的，而辅助索引的key可以重复。如果我们在Col2上建立一个辅助索引，则此索引的结构如下图所示：
 
 
 
-![img](https:////upload-images.jianshu.io/upload_images/1293895-eb2a432766c19d19.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/664/format/webp)
+![1556173774276](..\image\%5CGit%5CTTMS%5CMX-Notes%5Cimage%5C1556173774276.png)
 
-图 9 Secondary Key
+​									图 9 Secondary Key
 
 同样也是一颗B+Tree，data域保存数据记录的地址。因此，MyISAM中索引检索的算法为首先按照B+Tree搜索算法搜索索引，如果指定的Key存在，则取出其data域的值，然后以data域的值为地址，读取相应数据记录。
 
@@ -175,9 +157,11 @@ InnoDB的数据文件本身就是索引文件。
 
 
 
-![img](https:////upload-images.jianshu.io/upload_images/1293895-40fd73af714eb977.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/543/format/webp)
+![1556173541155](..\image\%5CGit%5CTTMS%5CMX-Notes%5Cimage%5C1556173541155.png)
 
-图 10 Primary Key
+
+
+​										图 10 Primary Key
 
 图10是InnoDB主索引（同时也是数据文件）的示意图，可以看到叶节点包含了完整的数据记录。这种索引叫做聚集索引。因为InnoDB的数据文件本身要按主键聚集，所以InnoDB要求表必须有主键（MyISAM可以没有），如果没有显式指定，则MySQL系统会自动选择一个可以唯一标识数据记录的列作为主键，如果不存在这种列，则MySQL自动为InnoDB表生成一个隐含字段作为主键，这个字段长度为6个字节，类型为长整形。
 
@@ -185,9 +169,9 @@ InnoDB的数据文件本身就是索引文件。
 
 
 
-![img](https:////upload-images.jianshu.io/upload_images/1293895-eeb9baea003174f8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/543/format/webp)
+![1556173584578](..\image\%5CGit%5CTTMS%5CMX-Notes%5Cimage%5C1556173584578.png)
 
-图 11 Secondary Key
+​										图 11 Secondary Key
 
 聚集索引这种实现方式使得按主键的搜索十分高效，但是辅助索引搜索需要检索两遍索引：首先检索辅助索引获得主键，然后用主键到主索引中检索获得记录。
 
