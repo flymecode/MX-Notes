@@ -187,6 +187,190 @@ JDK6+ 结果为 false  true
 
 使用直接引用的好处，就是减少了一次指针的定位，速度更加快。对于HotSpot采用的是直接地址访问。
 
+# Java类加载机制
+
+
+
+
+
+## 类加载的时机
+
+- 隐式加载 new 创建类的实例,
+- 显式加载：loaderClass,forName等
+- 访问类的静态变量，或者为静态变量赋值
+- 调用类的静态方法
+- 使用反射方式创建某个类或者接口对象的Class对象。
+- 初始化某个类的子类
+- 直接使用`java.exe`命令来运行某个主类
+
+
+
+## 类加载的过程
+
+我们编写的`java`文件都是保存着业务逻辑代码。`java`编译器将 `.java` 文件编译成扩展名为 `.class` 的文件。.class 文件中保存着java转换后，虚拟机将要执行的指令。当需要某个类的时候，java虚拟机会加载 .class 文件，并创建对应的class对象，将class文件加载到虚拟机的内存，这个过程被称为类的加载。
+
+![1547037121242](https://github.com/flymecode/MX-Notes/blob/master/image/1547037121242.png)
+
+
+
+#### 加载 
+
+从文件到内存
+
+类加载过程的一个阶段，ClassLoader通过一个类的完全限定名查找此类字节码文件，并利用字节码文件创建一个Class对象。
+
+#### 验证
+
+目的在于确保class文件的字节流中包含信息符合当前虚拟机要求，不会危害虚拟机自身的安全，主要包括四种验证：文件格式的验证，元数据的验证，字节码验证，符号引用验证。
+
+#### 准备
+
+1. 为类变量（ static 修饰的字段变量）分配内存并且设置该类变量的初始值，这里的内存分配都在方法区上（如static int i  = 5 这里只是将 i 赋值为0，在初始化的阶段再把 i 赋值为5)，这里不包含final修饰的static ，因为final在编译的时候就已经分配了。
+2. 这里不会为实例变量分配初始化，类变量会分配在方法区中，实例变量会随着对象分配到 Java 堆中。 
+
+#### 解析
+
+这里主要的任务是把常量池中的符号引用替换成直接引用
+
+#### 初始化
+
+这里是类记载的最后阶段。执行其静态初始化器（静态代码块）和静态初始化成员变量。
+
+- 前面已经对 static 初始化了默认值，这里我们对它进行赋值，成员变量也将被初始化
+- 使用 new 关键字进行主动创建一个类的实例的时候进行初始化
+- 使用 forName() 进行反射创建一个类对象
+- 对类进行反射调用，如果类还没有进行初始化，则先进行初始化操作。
+- 当对一个类进行初始化操作的时候，发现父类还没有初始化，先对父类进行初始化。
+- 当虚拟机启动的时候，用户需要指定一个主类，虚拟机会先初始化这个主类。
+
+## 类加载器
+
+类加载载器的任务是根据类的全限定名来读取此类的二进制字节流到 JVM 中，然后转换成一个与目标类对象的java.lang.Class 对象的实例，在java 虚拟机提供三种类加载器。
+
+- 引导类加载器 <JAVA_HOME> /lib
+- 扩展类加载器 <JAVA_HOME> /lib/ext
+- 系统类加载器 java -classpath
+- 定制类加载器
+
+## forName和loaderClass区别
+
+- Class.forName()得到的class是已经初始化完成的。
+- Classloader.loaderClass得到的class是还没有链接（验证，准备，解析三个过程被称为链接）的。
+
+## 双亲委派
+
+双亲委派模式要求除了顶层的启动类加载器之外，其余的类加载器都应该有自己的父类加载器，但是在双亲委派模式中父子关系采取的并不是继承的关系，而是采用组合关系来复用父类加载器的相关代码。
+
+在加载一个类的时候先委托给父类进行加载，如果父类不能加载则由子类尝试进行加载
+
+避免了类的重复加载，也避免了 Java 核心 API 被篡改
+
+```java
+protected Class<?> loadClass(String name, boolean resolve)
+    throws ClassNotFoundException {
+    // 增加同步锁，防止多个线程加载同一类
+    synchronized (getClassLoadingLock(name)) {
+        // First, check if the class has already been loaded
+        Class<?> c = findLoadedClass(name);
+        if (c == null) {
+            long t0 = System.nanoTime();
+            try {
+                if (parent != null) {
+                    c = parent.loadClass(name, false);
+                } else { // ExtClassLoader没有继承BootStrapClassLoader
+                    c = findBootstrapClassOrNull(name);
+                }
+            } catch (ClassNotFoundException e) {
+                // ClassNotFoundException thrown if class not found
+                // from the non-null parent class loader
+            }
+
+            if (c == null) {
+                // If still not found, then invoke findClass in order
+                // to find the class.
+                long t1 = System.nanoTime();
+                // AppClassLoader去我们项目中查找是否有这个文件，如有加载进来
+                // 没有就到用户自定义ClassLoader中加载。如果没有就抛出异常
+                c = findClass(name);
+
+                // this is the defining class loader; record the stats
+                sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);
+                sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);
+                sun.misc.PerfCounter.getFindClasses().increment();
+            }
+        }
+        if (resolve) {
+            resolveClass(c);
+        }
+        return c;
+    }
+}
+```
+
+
+
+#### 工作原理
+
+​	如果一个类收到了类加载的请求，它并不会自己先去加载，而是把这个请求委托给父类加载器去执行，如果父类加载器还存在父类加载器，则进一步向上委托，依次递归，请求最后到达顶层的启动类加载器，如果父类能够完成类的加载任务，就会成功返回，倘若父类加载器无法完成任务，子类加载器才会尝试自己去加载，这就是双亲委派模式。就是每个儿子都很懒，遇到类加载的活都给它爸爸干，直到爸爸说我也做不来的时候，儿子才会想办法自己去加载。
+
+#### 优势
+
+采用双亲委派模式的好处就是Java类随着它的类加载器一起具备一种带有优先级的层次关系，通过这种层级关系可以避免类的重复加载，当父亲已经加载了该类的时候，就没有必要子类加载器（ClassLoader）再加载一次。其次是考虑到安全因素，Java核心API中定义类型不会被随意替换，假设通过网路传递一个名为java.lang.Integer的类，通过双亲委派的的模式传递到启动类加载器，而启动类加载器在核心Java API发现这个名字类，发现该类已经被加载，并不会重新加载网络传递过来的java.lang.Integer.而之际返回已经加载过的Integer.class，这样便可以防止核心API库被随意篡改。可能你会想，如果我们在calsspath路径下自定义一个名为java.lang.SingInteger?该类并不存在java.lang中，经过双亲委托模式，传递到启动类加载器中，由于父类加载器路径下并没有该类，所以不会加载，将反向委托给子类加载器，最终会通过系统类加载器加载该类，但是这样做是不允许的，因为java.lang是核心的API包，需要访问权限，强制加载将会报出如下异常。
+
+```java
+java.lang.SecurityException:Prohibited package name: java.lang
+```
+
+
+
+### 类与类加载器
+
+- 在JVM中标识两个Class对象，是否是同一个对象存在的两个必要条件
+- 类的完整类名必须一致，包括包名。
+- 加载这个ClassLoader（指ClassLoader实例对象）必须相同。
+
+
+
+### 双亲委派模式的破坏者：线程上下文类加载器
+
+![1547038866296](https://github.com/flymecode/MX-Notes/blob/master/image/1547038866296.png)
+
+在Java应用中存在着很多服务提供者接口（Service Provider Interface，SPI），这些接口允许第三方为它们提供实现，如常见的 SPI 有 JDBC、JNDI等，这些 SPI 的接口属于 Java 核心库，一般存在rt.jar包中，由Bootstrap类加载器加载，而 SPI 的第三方实现代码则是作为Java应用所依赖的 jar 包被存放在classpath路径下，由于SPI接口中的代码经常需要加载具体的第三方实现类并调用其相关方法，但SPI的核心接口类是由引导类加载器来加载的，而Bootstrap类加载器无法直接加载SPI的实现类，同时由于双亲委派模式的存在，Bootstrap类加载器也无法反向委托AppClassLoader加载器SPI的实现类。在这种情况下，我们就需要一种特殊的类加载器来加载第三方的类库，而线程上下文类加载器就是很好的选择。
+
+线程上下文类加载器（contextClassLoader）是从 JDK 1.2 开始引入的，我们可以通过java.lang.Thread类中的getContextClassLoader()和 setContextClassLoader(ClassLoader cl)方法来获取和设置线程的上下文类加载器。如果没有手动设置上下文类加载器，线程将继承其父线程的上下文类加载器，初始线程的上下文类加载器是系统类加载器（AppClassLoader）,在线程中运行的代码可以通过此类加载器来加载类和资源，如下图所示，以jdbc.jar加载为例
+
+
+
+### 对象的创建过程
+
+当虚拟机遇到一个`new`的指令的时候，首先去检查这个指令是否能在`常量池`中定位到一个类的符号引用，并检查这个符号引用代表的类是否已经被加载，解析和初始化过。如果没有则执行相应初始化的过程。在类加载检查通过后，接下来虚拟机将为新生对象分配内存，`对象所需要的内存的大小在类加载完成后便可以完成确定`。`内存分配完成以后，虚拟机需要将分配的内存空间都初始化为零值`，保证了对象的实例字段在Java代码中可以不赋予初值就直接使用，程序能访问到这些字段的数据类型对应的零值。再接下来对象需要进行必要的设置，这个对象是哪个类的实例，如何才能找到这个类的元数据信息，如何找到对象的哈希码，对象的GC分带年龄。
+
+- Java堆如果是规整的采取：指针碰撞，
+- Java堆如果不是规整的话：空闲列表，在内存中直接分配一个足够大的内存空间划分给对象。
+- 对象创建是非常平凡的，在多线程的程序中会产生线程安全的问题，所以解决这个问题有两种方式
+- 使用CSA配上失败重试的方式来保证原子性
+- 内存分配动作按照线程划分在不同的空间之中进行，即每个线程在java堆中预先分配一个小块的内存成为本地分配缓冲，TLAB,哪个线程需要分配内存就在哪个线程的TALB上分配，只有在TALB用完之后才会重新分配新的TALB的时候才会同步锁定。
+
+### 对象的内存布局
+
+对象的内存布局一般分为三个部分：对象头，示例数据，对齐填充
+
+对象头中存放着对象自身的运行时数据，如哈希码，GC分带年龄，锁状态标志，偏向线程ID，线程持有的锁。
+
+对象头另外一部分还有`类型指针`，对象指向它类元数据的指针，虚拟机通过这个指针来确定这个对象是哪个类的实例。如果对象是一个java数组，那在对象头中还必须用一块用于记录数组长度的数据。因为虚拟机可以通过普通java对象的元数据信息确定java对象的大小。
+
+
+
+### 对象的访问定位方式
+
+#### 句柄和直接指针
+
+- 如果使用句柄的话，要在java堆中开辟一个句柄池，用来存放句柄地址，句柄地址中包含对象实例数据（堆）和类型数据（方法区）各自的地址信息。
+- 是用句柄的好处就是引用中存储的是稳定的句柄地址，当被移动时只会修改句柄中的实例数据指针，而引用地址不会被改变。
+- 使用直接指针访问方式的最大好处就是速度更快，它节省了一次访问指针定位的时间开销，引用直接指向存放实例数据的堆内存，在该内存中存放着指向方法区的类型数据地址。
+
+
+
 
 
 ## JMM

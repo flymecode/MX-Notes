@@ -329,8 +329,33 @@ Error
 - 异常对象实例需要保存栈的快照等信息，消耗性能
 
 - @Override，表示当前的方法定义将覆盖超类中的方法。
+
 - @Deprecated，使用了注解为它的元素编译器将发出警告，因为注解@Deprecated是不赞成使用的代码，被弃用的代码。
+
 - @SuppressWarnings，关闭不当编译器警告信息。
+
+  
+
+  #### 泛型
+
+  让我们的数据结构可以放置任何的数据类型
+
+  不可以是基本数据类型，只能是类对象
+  java有八中基本类型
+
+  - boolean,byte,char,short,int,long,float,double
+  - 每个基本数据类型都有对应的包装类型
+  - Boolean,Byte,Chareger,Short,Integer,Long,Float,Double
+
+  #### <T extends Comparable<T>>和 <T extends Comparable<? super T>>有什么不同？
+
+  - ##### <T extends Comparable<T>>
+
+    类型 T 必须实现 `Comparable` 接口，并且这个接口的类型是 T。只有这样，T 的实例之间才能相互比较大小。例如，在实际调用时若使用的具体类是 Dog，那么 Dog 必须 `implements Comparable<Dog>`
+
+  - ##### <T extends Comparable<? super T>>
+
+  类型 T 必须实现 `Comparable` 接口，并且这个接口的类型是 T 或 T 的任一父类。这样声明后，T 的实例之间，T 的实例和它的父类的实例之间，可以相互比较大小。例如，在实际调用时若使用的具体类是 Dog (假设 Dog 有一个父类 Animal），Dog 可以从 Animal 那里继承Comparable<Animal>，或者自己 implements Comparable<Dog>。
 
 ### 注解
 
