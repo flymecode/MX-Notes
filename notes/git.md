@@ -10,6 +10,8 @@
 
 ![1546001824528](https://github.com/flymecode/MX-Notes/blob/master/images/1546001824528.png)
 
+![1557333350575](E:\Git\TTMS\MX-Notes\image\1557333350575.png)
+
   - Git是一款源代码管理工具(版本控制工具)
     - 我们写的代码需要使用Git进行管理。
   - 源代码有必要管理起吗？

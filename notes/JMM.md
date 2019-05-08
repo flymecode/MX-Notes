@@ -242,7 +242,7 @@ j = i; // 线程b执行
 
 
 
-![1552873261221](https://github.com/flymecode/MX-Notes/blob/master/image/1552873261221.png)
+![1552873261221](../image/1552873261221.png)
 
 ##### volatile：JVM提供的轻量级同步机制
 
@@ -295,7 +295,7 @@ ctorInstance(memory); // 2.初始化对象
 
 由于2和3发生了重排序                                                                                                                                                                                                                                                                                                                                                                     
 
-![1552874721232](https://github.com/flymecode/MX-Notes/blob/master/image/1552874721232.png)
+![1552874721232](../image/1552874721232.png)
 
 ### CAS
 
@@ -317,20 +317,20 @@ ABA问题
 
 ##### Java线程池
 
-![1552902848314](https://github.com/flymecode/MX-Notes/blob/master/image/1552902848314.png)
+![1552902848314](../image/1552902848314.png)
 
 ##### Fork/Join框架
 
 Work-Stealing算法：某个线程从其它线程队列里窃取任务来执行
 
-![1552902950158](https://github.com/flymecode/MX-Notes/blob/master/image/1552902950158.png)
+![1552902950158](../image/1552902950158.png)
 
 ##### 为什么要使用线程池？
 
 - 降低资源消耗
 - 提高线程的可管理性
 
-![1552903339093](https://github.com/flymecode/MX-Notes/blob/master/image/1552903339093.png)
+![1552903339093](../image/1552903339093.png)
 
 ```java
 public ThreadPoolExecutor(int corePoolSize, // 核心线程数量
@@ -351,15 +351,15 @@ public ThreadPoolExecutor(int corePoolSize, // 核心线程数量
 - DiscardPolicy:直接丢弃任务
 - 实现RejectedExecutionHandler接口自定义handler
 
-![1552906940511](https://github.com/flymecode/MX-Notes/blob/master/image/1552906940511.png)
+![1552906940511](../image/1552906940511.png)
 
-![1552909427115](https://github.com/flymecode/MX-Notes/blob/master/image/1552909427115.png)
+![1552909427115](../image/1552909427115.png)
 
-![1552908241601](https://github.com/flymecode/MX-Notes/blob/master/image/1552908241601.png)
+![1552908241601](../image/1552908241601.png)
 
 ##### 线程生命周期
 
-![1552909755921](https://github.com/flymecode/MX-Notes/blob/master/image/1552909755921.png)
+![1552909755921](../image/1552909755921.png)
 
 ##### 线程池的大小如何选定？
 

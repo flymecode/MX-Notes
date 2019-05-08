@@ -700,9 +700,15 @@ synchronized和ReentrantLock的区别？
 - 优先使用synchronized
 - 如果使用Lock的特性的时候使用Lock
 
+### 线程池
 
+![1557327271312](E:\Git\TTMS\MX-Notes\image\1557327271312.png)
 
-### ThreadLocal
+![1557327451978](E:\Git\TTMS\MX-Notes\image\1557327451978.png)
+
+线程池的执行流程
+
+### ![1557327546254](E:\Git\TTMS\MX-Notes\image\1557327546254.png)ThreadLocal
 
 - ThreadLocal主要解决的就是每个线程绑定自己的指们可以将ThreadLocal类比喻成全剧存放数据的盒子，盒子中可以存放每个线程私有数据。
 
