@@ -700,36 +700,7 @@ synchronized和ReentrantLock的区别？
 - 优先使用synchronized
 - 如果使用Lock的特性的时候使用Lock
 
-### 线程池
 
-![1557327271312](E:\Git\TTMS\MX-Notes\image\1557327271312.png)
-
-![1557327451978](E:\Git\TTMS\MX-Notes\image\1557327451978.png)
-
-线程池的执行流程
-
-### ![1557327546254](E:\Git\TTMS\MX-Notes\image\1557327546254.png)ThreadLocal
-
-- ThreadLocal主要解决的就是每个线程绑定自己的指们可以将ThreadLocal类比喻成全剧存放数据的盒子，盒子中可以存放每个线程私有数据。
-
-- 类ThreadLocal解决的是变量在不同线程间的隔离性，也就是不同线程拥有自己的值，不同的线程中值是可以放入ThreadLocal类中进行保存。
-
-- 通过覆盖ThreadLocal中的initialValue(）方法解决第一次获取值为null的情况
-
-- 类InheritableThreadLocal的使用
-
-- 使用InheritableThreadLocal的时候，如果子线程在取值的同时，主线程将InheritableThreadLocal中的值进行了修改那么，子线程取到的值还是旧值。
-
-##### 进程和线程的区别？
-
-- 进程是资源分配的最小单位，线程是CUP调度的最小单位。
-- 所有与进程相关的资源都被记录在PCB中。
-- 进程是抢占处理机的调度单位，线程属于某个进程，共享其资源
-- 线程只由堆栈寄存器、程序计数器和TCB组成
-- 线程不能看做独立的应用，而进程可看做独立应用
-- 进程有独立的地址空间，相互影响，线程只是进程的不同执行路径
-- 线程没有独立的地址空间，多进程的程序比多线程程序健壮
-- 进程的切换比线程切换开销大
 
 ##### Java进程和线程的关系
 

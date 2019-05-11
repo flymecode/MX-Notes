@@ -94,7 +94,13 @@ value在下一次ThreadLocalMap调用set,get，remove的时候会被清除,否�
 
 
 
+### ThreadLocal
 
+- ThreadLocal主要解决的就是每个线程绑定自己的指们可以将ThreadLocal类比喻成全剧存放数据的盒子，盒子中可以存放每个线程私有数据。
+- 类ThreadLocal解决的是变量在不同线程间的隔离性，也就是不同线程拥有自己的值，不同的线程中值是可以放入ThreadLocal类中进行保存。
+- 通过覆盖ThreadLocal中的initialValue(）方法解决第一次获取值为null的情况
+- 类InheritableThreadLocal的使用
+- 使用InheritableThreadLocal的时候，如果子线程在取值的同时，主线程将InheritableThreadLocal中的值进行了修改那么，子线程取到的值还是旧值。
 
 
 
