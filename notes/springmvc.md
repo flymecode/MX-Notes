@@ -7,7 +7,7 @@ Spring MVC是一个基于Java的实现了MVC设计模式的请求驱动类型的
 2、SpringMVC的流程？
 
 （1）用户发送请求至前端控制器DispatcherServlet；
-（2） DispatcherServlet收到请求后，调用HandlerMapping处理器映射器，请求获取Handle；
+（2） DispatcherServlet收到请求后，调用HandlerMapping处理器映射器，请求获取Handler；
 （3）处理器映射器根据请求url找到具体的处理器，生成处理器对象及处理器拦截器(如果有则生成)一并返回给DispatcherServlet；
 （4）DispatcherServlet 调用 HandlerAdapter处理器适配器；
 （5）HandlerAdapter 经过适配调用 具体处理器(Handler，也叫后端控制器)；
@@ -94,25 +94,21 @@ View是一个接口， 它的实现类支持不同的视图类型（jsp，freema
 
 在web.xml中配置一个CharacterEncodingFilter过滤器，设置成utf-8；
 
+```xml
+<filter>
+<filter-name>CharacterEncodingFilter</filter-name>
 
+<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
 
-    <filter>
-    <filter-name>CharacterEncodingFilter</filter-name>
-    
-    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-    
-    <init-param>
-    
-        <param-name>encoding</param-name>
-    
-        <param-value>utf-8</param-value>
-    
-    </init-param>
-    </filter>
-    <filter-mapping>
-    <filter-name>CharacterEncodingFilter</filter-name>
-    
-    <url-pattern>/*</url-pattern>
+<init-param>
+    <param-name>encoding</param-name>
+    <param-value>utf-8</param-value>
+</init-param>
+</filter>
+<filter-mapping>
+<filter-name>CharacterEncodingFilter</filter-name>
+<url-pattern>/*</url-pattern>
+```
 
 （2）get请求中文参数出现乱码解决方法有两个：
 
@@ -182,32 +178,18 @@ ISO8859-1是tomcat默认编码，需要将tomcat编码后的内容按utf-8编码
 
 有两种写法,一种是实现HandlerInterceptor接口，另外一种是继承适配器类，接着在接口方法当中，实现处理逻辑；然后在SpringMvc的配置文件中配置拦截器即可：
 
-  <!-- 配置SpringMvc的拦截器 -->
-
-
-
-    <!-- 配置一个拦截器的Bean就可以了 默认是对所有请求都拦截 -->
-     
-    <bean id="myInterceptor" class="com.zwp.action.MyHandlerInterceptor"></bean>
-     
-    <!-- 只针对部分请求拦截 -->
-     
-    <mvc:interceptor>
-     
-       <mvc:mapping path="/modelMap.do" />
-     
-       <bean class="com.zwp.action.MyHandlerInterceptorAdapter" />
-     
-    </mvc:interceptor>
-
-
-
+```xml
+<!-- 配置一个拦截器的Bean就可以了 默认是对所有请求都拦截 -->
+<!-- 配置SpringMvc的拦截器 -->
+<bean id="myInterceptor" class="com.zwp.action.MyHandlerInterceptor"></bean>
+<!-- 只针对部分请求拦截 -->
+<mvc:interceptor>
+   <mvc:mapping path="/modelMap.do" />
+   <bean class="com.zwp.action.MyHandlerInterceptorAdapter" />
+</mvc:interceptor>
+```
 
 21、注解原理：
 
 注解本质是一个继承了Annotation的特殊接口，其具体实现类是Java运行时生成的动态代理类。我们通过反射获取注解时，返回的是Java运行时生成的动态代理对象。通过代理对象调用自定义注解的方法，会最终调用AnnotationInvocationHandler的invoke方法。该方法会从memberValues这个Map中索引出对应的值。而memberValues的来源是Java常量池。
---------------------- 
-作者：a745233700 
-来源：CSDN 
-原文：https://blog.csdn.net/a745233700/article/details/80963758 
-版权声明：本文为博主原创文章，转载请附上博文链接！
+

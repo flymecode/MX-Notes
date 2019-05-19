@@ -293,7 +293,7 @@ EXPLAIN SELECT * FROM employees.titles WHERE from_date='1986-06-26' AND emp_no='
 
 隔离级别规定一个事务中所做的修改对其他事务的可见性。
 
-#### READ UNCOMMITTED(未提交读)
+READ UNCOMMITTED(未提交读)
 
 READ COMMITTED(提交读)
 

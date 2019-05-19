@@ -473,7 +473,6 @@ public class Singleton {
 ```java
 memory = allocate(); // 1.分配对象的内存空间
 instance = memory(); // 3.设置instance指向分配的内存地址，此时对象还没初始化！
-
 ctorInstance(memory); // 2.初始化对象
 ```
 
