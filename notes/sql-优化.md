@@ -386,3 +386,16 @@ limit的优化查询，使用索引列或主键列进行order by
 ![1557949286438](E:\Git\TTMS\MX-Notes\image\1557949286438.png)
 
 ![1557949292655](E:\Git\TTMS\MX-Notes\image\1557949292655.png)
+
+
+
+## 关于索引列为null的问题
+
+如果某列字段中包含null，确实是可以使用索引的
+
+虽然MySQL可以在含有null的列上使用索引，但不代表null和其他数据在索引中是一样的。
+
+不建议列上允许为空。最好限制`not null`，并设置一个默认值，比如`0`和`''`空字符串等，如果是datetime类型，可以设置成`'1970-01-01 00:00:00'`这样的特殊值。
+
+对MySQL来说，`null`是一个特殊的值，`Conceptually, NULL means “a missing unknown value” and it is treated somewhat differently from other values`。比如：不能使用`=,<,>`这样的运算符，对`null`做算术运算的结果都是`null`，`count`时不会包括`null`行等，`null`比空字符串需要更多的存储空间等。
+
