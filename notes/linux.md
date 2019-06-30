@@ -60,6 +60,22 @@ ctrl + r
 
 
 
+top - H
+
+cpu us: 用户空间的cpu使用情况 用户层代码
+
+cpu sy:内核空间的cpu使用情况 系统调用
+
+load average: 1,5,15分钟load平均值，跟着核数系数，0代表通常，1，代表打满，1+代表等待阻塞
+
+memory:free 空闲内存，used使用内存
+
+pstree -p 端口号  线程树
+
+
+
+
+
 
 
 
