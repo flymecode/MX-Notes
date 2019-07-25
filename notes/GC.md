@@ -321,3 +321,12 @@ PhantomReference ref = new PhantomReference(str,queue);// 虚引用
 
 对象真正的死亡至少需要经历两次标记的过程，如果对象在进行可达性分析算法之后发现没有与GC Roots相连接的引用链，那么它将会被第一次标记并且进行一次筛选，对象是否有必要执行finalize方法，如果对象没有覆盖finalize方法，或者finalize方法已经被虚拟机调用过一次，则没有必要执行finalize方法。当对象被判定为执行finalize方法的时候，将对象放置在一个F-Queue队列中，并稍后有Java虚拟机创建一个Finazlizer线程去触发这个方法。如果对象要在finalize（）成功拯救自己，只需要重新或者对象引用链上任何一个对象关联即可
 
+
+
+### 内存的分配和回收策略
+
+- 大多数情况下，对象在新生代Eden 区中分配，当 Enden 区没有足够空间进行分配时，发起一次 Minor GC
+- 大对象直接分配到老年代，比如那些很长的字符串和大数组。我们应该避免创建命短大的对象
+- 长期存活的对象将进入老年代，如果 Suvivor 空间中相同年领的对象大小总和大于 Suvivor 空间的一半，年龄大于或者等于该年龄的对象可以直接进入老年代，无须等到 MaxTenuringTreshold 中要求的年龄
+- 空间分配担保，在发生 Minor GC 之前，会检查老年代中最大的可用连续空间是否大于新生代所有对象的总空间，如果条件成立，那么 Minor GC 可以确保是安全的。如果不成虚拟机将查看 HandlePromotionFaiure 设置值是否允许担保失败，如果是的话，将检查老年代最大的可用空间是否大于历次晋升到老年代对象的平均大小，如果大于将进行一次 Minor GC,如果小于，或者HandlePromotionFaiure 设置为不允许冒险，那么就会进行一次 Full GC，通常情况下为了避免 Full GC 频繁，我们会将 HandlePromotionFaiure 开关打开。
+
